@@ -1,78 +1,108 @@
 set nocompatible
-filetype off
 
-""" Initialize Vundle
+""" Initialize Vundle {
 
-" set the runtime path to include Vundle
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+    filetype off
+    " set the runtime path to include Vundle
+    set rtp+=~/.vim/bundle/Vundle.vim
+    call vundle#begin()
 
-Plugin 'gmarik/Vundle.vim'
+    Plugin 'gmarik/Vundle.vim'
 
-""" /Initialize Vundle
+""" /Initialize Vundle }
 
+""" { Plugins
 
-""" { Configuration }
+    Plugin 'scrooloose/syntastic'
+    Plugin 'kien/ctrlp.vim'
+    Plugin 'bling/vim-airline'
+    Plugin 'mileszs/ack.vim'
+    Plugin 'Lokaltog/vim-easymotion'
+    Plugin 'scrooloose/nerdtree'
+    Plugin 'altercation/vim-colors-solarized'
+    Plugin 'pangloss/vim-javascript'
+    Plugin 'scrooloose/nerdcommenter'
+    Plugin 'airblade/vim-gitgutter'
+    Plugin 'SirVer/ultisnips'
+    Plugin 'honza/vim-snippets'
+    Plugin 'jiangmiao/auto-pairs'
+    Plugin 'Valloric/YouCompleteMe'
+    Plugin 'ervandew/supertab'
 
-" don't beep, do visual bell
-set visualbell
+    """ Give control to Vundle
+    call vundle#end()
+    filetype plugin indent on
+" /Plugins }
 
-" no swap files
-set noswapfile
+""" { Configuration
 
-" enable vim colors (solarized)
-syntax enable
-set background=dark
-colorscheme solarized
+    " don't beep, do visual bell
+    set visualbell
 
-" remove trailing whitespace, persist cursor position
-function! <SID>StripTrailingWhitespaces()
-	let l = line('.')
-	let c = col('.')
-	%s/\s\+$//e
-	call cursor(l, c)
-endfun
-autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+    " no swap files
+    set noswapfile
 
-" persist undo
-set undodir=~/.vim/undo
-set undofile
+    " enable vim colors (solarized)
+    syntax enable
+    set background=dark
+    colorscheme solarized
 
-" relative line numbers
-set rnu
+    " remove trailing whitespace, persist cursor position
+    function! <SID>StripTrailingWhitespaces()
+        let l = line('.')
+        let c = col('.')
+        %s/\s\+$//e
+        call cursor(l, c)
+    endfun
+    autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 
-""" { Keybindings }
+    " setup not-stupid tabs
+    set tabstop=4
+    set shiftwidth=4
+    set expandtab
 
-" escape insert -> jf
-imap jf <Esc>
+    " persist undo
+    set undodir=~/.vim/undo
+    set undofile
 
-" <leader> -> ','
-let mapleader = ","
+    " relative line numbers
+    set rnu
 
-" map NERDTree to Ctrl+n
-map <C-n> :NERDTreeToggle<CR>
+    " higlight /search
+    set hlsearch
 
-" insert newline without entering insert mode
-nmap <CR> o<Esc>
+    " change git-gutter's gutter background color
+    highlight clear SignColumn
 
-" reselect text block after paste with gV
-nnoremap <expr> gV '`[' . getregtype(v:register)[0] . '`]'
+    " make YCM compatible with UltiSnips (using supertab)
+    let g:ycm_key_list_select_completion = ['<S-j>', '<Down>']
+    let g:ycm_key_list_previous_completion = ['<S-k>', '<Up>']
+    let g:SuperTabDefaultCompletionType = '<C-n>'
 
-""" { Plugins }
+    " better key bindings for UltiSnipsExpandTrigger
+    let g:UltiSnipsExpandTrigger = "<tab>"
+    let g:UltiSnipsJumpForwardTrigger = "<tab>"
+    let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
-Bundle 'scrooloose/syntastic'
-Bundle 'kien/ctrlp.vim'
-Bundle 'bling/vim-airline'
-Bundle 'mileszs/ack.vim'
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'scrooloose/nerdtree'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'pangloss/vim-javascript'
-Bundle 'scrooloose/nerdcommenter'
-Bundle 'airblade/vim-gitgutter'
+    " force closed-pair jumping instead of inserting
+    let g:AutoPairsFlyMode = 1
 
-""" Give control to Vundle
+" /Configuration }
 
-call vundle#end()
-filetype plugin indent on
+""" { Keybindings
 
+    " escape insert -> jf
+    imap jf <Esc>
+
+    " <leader> -> ','
+    let mapleader = ","
+
+    " map NERDTree to Ctrl+n
+    map <C-n> :NERDTreeToggle<CR>
+
+    " insert newline without entering insert mode
+    nmap <CR> o<Esc>
+
+    " reselect text block after paste with gV
+    nnoremap <expr> gV '`[' . getregtype(v:register)[0] . '`]'
+" /Keybindings }
