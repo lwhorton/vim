@@ -1,3 +1,4 @@
+# Logging
 snippet jss "JSON.stringify"
 JSON.stringify($1)
 endsnippet
@@ -22,4 +23,18 @@ endsnippet
 
 snippet mod "CommonJS module" b
 module.exports = $1
+endsnippet
+
+# Functions
+snippet f "Anonymous function" w
+function ($1) {
+	$2
+}
+endsnippet
+
+# BDD Testing
+snippet des "Describe block"
+describe('$1', function() {
+	$2
+})
 endsnippet

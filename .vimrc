@@ -25,7 +25,7 @@ set nocompatible
     Plugin 'airblade/vim-gitgutter'
     Plugin 'SirVer/ultisnips'
     Plugin 'honza/vim-snippets'
-    Plugin 'jiangmiao/auto-pairs'
+    Plugin 'Raimondi/delimitMate'
     Plugin 'Valloric/YouCompleteMe'
     Plugin 'ervandew/supertab'
 
@@ -41,6 +41,13 @@ set nocompatible
 
     " no swap files
     set noswapfile
+
+    " no wrapping/auto-inserting of \n
+    set nowrap
+    set textwidth=0
+
+    " allow deleting previously inserted text other than in this insert mode
+    set backspace=indent,eol,start
 
     " enable vim colors (solarized)
     syntax enable
