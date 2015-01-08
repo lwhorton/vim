@@ -15,12 +15,6 @@ snippet ce "console.error"
 console.error($1)
 endsnippet
 
-snippet b4 "beforeEach" b
-beforeEach(function () {
-    $1
-})
-endsnippet
-
 snippet mod "CommonJS module" b
 module.exports = $1
 endsnippet
@@ -28,13 +22,25 @@ endsnippet
 # Functions
 snippet f "Anonymous function" w
 function ($1) {
-	$2
+	$0
 }
 endsnippet
 
 # BDD Testing
+snippet b4 "beforeEach" b
+beforeEach(function () {
+    $0
+})
+endsnippet
+
 snippet des "Describe block"
 describe('$1', function() {
-	$2
+	$0
+})
+endsnippet
+
+snippet it "it block" b
+it('$1', function() {
+	$0
 })
 endsnippet

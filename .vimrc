@@ -42,6 +42,9 @@ set nocompatible
     " no swap files
     set noswapfile
 
+    " automatically change current directory to open file
+    set autochdir
+
     " no wrapping/auto-inserting of \n
     set nowrap
     set textwidth=0
@@ -68,12 +71,16 @@ set nocompatible
     set shiftwidth=4
     set expandtab
 
+    " ignore case when searching
+    set smartcase
+
     " persist undo
     set undodir=~/.vim/undo
     set undofile
 
-    " relative line numbers
+    " hybrid line numbers
     set rnu
+    set nu
 
     " higlight /search
     set hlsearch
@@ -112,4 +119,9 @@ set nocompatible
 
     " reselect text block after paste with gV
     nnoremap <expr> gV '`[' . getregtype(v:register)[0] . '`]'
+
+    " make < > shifts keep selection
+    vnoremap < <gv
+    vnoremap > >gv
+
 " /Keybindings }
