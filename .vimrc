@@ -28,6 +28,10 @@ set nocompatible
     Plugin 'Raimondi/delimitMate'
     Plugin 'Valloric/YouCompleteMe'
     Plugin 'ervandew/supertab'
+    Plugin 'godlygeek/tabular'
+    Plugin 'wavded/vim-stylus'
+    Plugin 'mattn/emmet-vim'
+    Plugin 'mxw/vim-jsx'
 
     """ Give control to Vundle
     call vundle#end()
@@ -72,6 +76,7 @@ set nocompatible
     set expandtab
 
     " ignore case when searching
+    set ignorecase
     set smartcase
 
     " persist undo
@@ -112,7 +117,7 @@ set nocompatible
     let mapleader = ","
 
     " map NERDTree to Ctrl+n
-    map <C-n> :NERDTreeToggle<CR>
+    map <C-t> :NERDTreeToggle<CR>
 
     " insert newline without entering insert mode
     nmap <CR> o<Esc>
