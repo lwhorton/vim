@@ -1,3 +1,4 @@
+set shell=/bin/sh
 set nocompatible
 
 """ Initialize Vundle {
@@ -25,13 +26,13 @@ set nocompatible
     Plugin 'airblade/vim-gitgutter'
     Plugin 'SirVer/ultisnips'
     Plugin 'honza/vim-snippets'
-    Plugin 'Raimondi/delimitMate'
     Plugin 'Valloric/YouCompleteMe'
     Plugin 'ervandew/supertab'
     Plugin 'godlygeek/tabular'
     Plugin 'wavded/vim-stylus'
-    Plugin 'mattn/emmet-vim'
     Plugin 'mxw/vim-jsx'
+    Plugin 'tpope/vim-fugitive'
+    Plugin 'tpope/vim-surround'
 
     """ Give control to Vundle
     call vundle#end()
@@ -94,9 +95,10 @@ set nocompatible
     highlight clear SignColumn
 
     " make YCM compatible with UltiSnips (using supertab)
-    let g:ycm_key_list_select_completion = ['<S-j>', '<Down>']
-    let g:ycm_key_list_previous_completion = ['<S-k>', '<Up>']
+    let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
+    let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
     let g:SuperTabDefaultCompletionType = '<C-n>'
+
 
     " better key bindings for UltiSnipsExpandTrigger
     let g:UltiSnipsExpandTrigger = "<tab>"
