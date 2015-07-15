@@ -27,6 +27,7 @@ set nocompatible
     Plugin 'SirVer/ultisnips'
     Plugin 'honza/vim-snippets'
     Plugin 'Valloric/YouCompleteMe'
+    Plugin 'Raimondi/delimitMate'
     Plugin 'ervandew/supertab'
     Plugin 'godlygeek/tabular'
     Plugin 'wavded/vim-stylus'
