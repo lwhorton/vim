@@ -1,5 +1,13 @@
 # Problems + Solutions
 
+## Installing plugins
+Vundle must be installed before we can install the rest of the suite:
+```
+git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+vim .
+:PluginInstall
+```
+
 ## UltiSnips filetype recognotion doesn't work
 Vundle doesn't complete the installation process. UltiSnips needs a few more source files, but Vim only allows this directly in the home directory, so make a sym link:
 ```bash
@@ -16,4 +24,4 @@ cd ~/.vim/bundle/YouCompleteMe
 ```
 
 ## YouCompleteMe and UltiSnips don't get along
-Due to the <template>-><tab> expand nature of UltiSnips, YouCompleteMe's tab to select is broken. This has been remapped using the help of SuperTab. Use <S-j> and <S-k> to move up/down auto-complete sections. I don't like that YCM puts the selection in the register and expects you to keep typing... it would be much nicer if you highlight the selection, hit enter, then keep typing (like every other auto-complete ever).
+Due to the <template>-><tab> expand nature of UltiSnips, YouCompleteMe's tab to select is broken. This has been remapped using the help of SuperTab. Use `<ctrl-j>` and `<ctrl-k>` to move up/down auto-complete selections.
