@@ -102,6 +102,8 @@ set nocompatible
     let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
     let g:SuperTabDefaultCompletionType = '<C-n>'
 
+    " make UltiSnips pick up custom snippets in the vim/UltiSnips dir
+    let g:UltiSnipsSnippetDirectories=["UltiSnips", "vim/UltiSnips"]
 
     " better key bindings for UltiSnipsExpandTrigger
     let g:UltiSnipsExpandTrigger = "<tab>"
