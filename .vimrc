@@ -34,6 +34,7 @@ set nocompatible
     Plugin 'mxw/vim-jsx'
     Plugin 'tpope/vim-fugitive'
     Plugin 'tpope/vim-surround'
+    Plugin 'Yggdroot/indentLine'
 
     """ Give control to Vundle
     call vundle#end()
@@ -64,6 +65,9 @@ set nocompatible
     set t_Co=256
     set background=dark
     colorscheme solarized
+
+    " modify line-indent color
+    let g:indentLine_color_term = 239
 
     " remove trailing whitespace, persist cursor position
     function! <SID>StripTrailingWhitespaces()
