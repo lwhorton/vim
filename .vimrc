@@ -8,13 +8,12 @@ set nocompatible
     set rtp+=~/.vim/bundle/Vundle.vim
     call vundle#begin()
 
-    Plugin 'gmarik/Vundle.vim'
+    Plugin 'VundleVim/Vundle.vim'
 
 """ /Initialize Vundle }
 
 """ { Plugins
 
-    Plugin 'scrooloose/syntastic'
     Plugin 'kien/ctrlp.vim'
     Plugin 'bling/vim-airline'
     Plugin 'mileszs/ack.vim'
@@ -59,6 +58,9 @@ set nocompatible
     " allow deleting previously inserted text other than in this insert mode
     set backspace=indent,eol,start
 
+    " enable html/css highlighting in js files
+    let g:javascript_enable_domhtmlcss=1
+
     " enable vim colors (solarized)
     syntax on
     let g:solarized_termcolors=256
@@ -100,6 +102,13 @@ set nocompatible
 
     " change git-gutter's gutter background color
     highlight clear SignColumn
+
+    " additional files to ignore when searching with ctrl-p
+    let g:ctrlp_custom_ignore = {
+      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist))$',
+      \ 'file': '\v\.(exe|so|dll)$',
+      \ 'link': 'some_bad_symbolic_links',
+      \ }
 
     " make YCM compatible with UltiSnips (using supertab)
     let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']

@@ -36,11 +36,11 @@ endsnippet
 # w expanded if the tab trigger start matches a word boundary
 # i expanded if the tab trigger is the first word on the line or is preceded by one or more whitespace characters
 
-snippet = "Bound arrow function one param" i
+snippet - "single line arrow function" i
 ($1) => $0
 endsnippet
 
-snippet - "Bound arrow function params" i
+snippet = "multi line arrow function" i
 ($1) => {
 	$0
 }
