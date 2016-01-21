@@ -105,7 +105,7 @@ set nocompatible
 
     " additional files to ignore when searching with ctrl-p
     let g:ctrlp_custom_ignore = {
-      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist))$',
+      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist|node_modules))$',
       \ 'file': '\v\.(exe|so|dll)$',
       \ 'link': 'some_bad_symbolic_links',
       \ }

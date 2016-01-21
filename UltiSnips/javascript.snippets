@@ -1,3 +1,7 @@
+# b expanded only if the tab trigger is the first word on the line
+# w expanded if the tab trigger start matches a word boundary
+# i expanded if the tab trigger is the first word on the line or is preceded by one or more whitespace characters
+
 # Logging
 snippet jss "JSON.stringify"
 JSON.stringify($1)
@@ -13,6 +17,19 @@ endsnippet
 
 snippet ce "console.error"
 console.error($1)
+endsnippet
+
+snippet cw "console.warn"
+console.warn($1)
+endsnippet
+
+# carpal tunnel
+snippet l "let" i
+let $1 = $0
+endsnippet
+
+snippet c "const" i
+const $1 = $0
 endsnippet
 
 # Modules
@@ -31,11 +48,19 @@ function ($1) {
 }
 endsnippet
 
-# Arrow functions
-# b expanded only if the tab trigger is the first word on the line
-# w expanded if the tab trigger start matches a word boundary
-# i expanded if the tab trigger is the first word on the line or is preceded by one or more whitespace characters
+snippet f* "Anonymous generator function" w
+function* ($1) {
+	$0
+}
+endsnippet
 
+snippet fun* "named generator function" w
+function* $1($2) {
+	$0
+}
+endsnippet
+
+# Arrow functions
 snippet - "single line arrow function" i
 ($1) => $0
 endsnippet
@@ -63,4 +88,23 @@ snippet it "it block" b
 it('$1', function() {
 	$0
 })
+endsnippet
+
+# sugar
+snippet proto "prototype" b
+$1.prototype.$2 = function($3) {
+	$0
+}
+endsnippet
+
+snippet factory "factory" b
+module.exports = $1Factory
+
+$1Factory.inject = [
+	$2
+]
+
+function $1Factory($3) {
+	$0
+}
 endsnippet
