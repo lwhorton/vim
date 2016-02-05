@@ -1,0 +1,21 @@
+# carpal tunnerl
+snippet - "arrow"
+-> $0
+endsnippet
+
+snippet update "update pattern" b
+-- Update
+
+update : Action -> Model -> Model
+update action model =
+	case action of
+		$0
+endsnippet
+
+snippet view "view pattern" b
+-- View
+
+view : Signal.Address Action -> Model -> Html
+view action model =
+	$0
+endsnippet

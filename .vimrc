@@ -17,7 +17,7 @@ set nocompatible
     Plugin 'kien/ctrlp.vim'
     Plugin 'bling/vim-airline'
     Plugin 'mileszs/ack.vim'
-    Plugin 'Lokaltog/vim-easymotion'
+    Plugin 'easymotion/vim-easymotion'
     Plugin 'scrooloose/nerdtree'
     Plugin 'altercation/vim-colors-solarized'
     Plugin 'pangloss/vim-javascript'
@@ -34,6 +34,7 @@ set nocompatible
     Plugin 'tpope/vim-fugitive'
     Plugin 'tpope/vim-surround'
     Plugin 'Yggdroot/indentLine'
+    Plugin 'elmcast/elm-vim'
 
     """ Give control to Vundle
     call vundle#end()
@@ -55,7 +56,7 @@ set nocompatible
     set nowrap
     set textwidth=0
 
-    " allow deleting previously inserted text other than in this insert mode
+    " allow deleting text inserted before current insert mode started
     set backspace=indent,eol,start
 
     " enable html/css highlighting in js files
@@ -99,6 +100,7 @@ set nocompatible
 
     " higlight /search
     set hlsearch
+    set incsearch
 
     " change git-gutter's gutter background color
     highlight clear SignColumn
@@ -126,6 +128,12 @@ set nocompatible
     " force closed-pair jumping instead of inserting
     let g:AutoPairsFlyMode = 1
 
+    " disable default easymotion
+    let g:EasyMotion_do_mapping = 0
+
+    " easymotion case insensitivity
+    let g:EasyMotion_smartcase = 1
+
 " /Configuration }
 
 """ { Keybindings
@@ -135,6 +143,9 @@ set nocompatible
 
     " <leader> -> ','
     let mapleader = ","
+
+    " jump anywhere with s{char}
+    nmap s <Plug>(easymotion-overwin-f)
 
     " map NERDTree to Ctrl+n
     map <C-t> :NERDTreeToggle<CR>
@@ -148,5 +159,9 @@ set nocompatible
     " make < > shifts keep selection
     vnoremap < <gv
     vnoremap > >gv
+
+    " build elm files
+    nmap <leader>bb <Plug>(elm-make)
+    nmap <leader>bm <Plug>(elm-make-main)
 
 " /Keybindings }
