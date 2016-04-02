@@ -14,27 +14,32 @@ set nocompatible
 
 """ { Plugins
 
-    Plugin 'kien/ctrlp.vim'
-    Plugin 'bling/vim-airline'
     Plugin 'mileszs/ack.vim'
-    Plugin 'easymotion/vim-easymotion'
     Plugin 'scrooloose/nerdtree'
-    Plugin 'altercation/vim-colors-solarized'
-    Plugin 'pangloss/vim-javascript'
     Plugin 'scrooloose/nerdcommenter'
     Plugin 'airblade/vim-gitgutter'
-    Plugin 'SirVer/ultisnips'
-    Plugin 'honza/vim-snippets'
-    Plugin 'Valloric/YouCompleteMe'
-    Plugin 'Raimondi/delimitMate'
-    Plugin 'ervandew/supertab'
-    Plugin 'godlygeek/tabular'
+    Plugin 'kien/ctrlp.vim'
+    Plugin 'bling/vim-airline'
+
+    Plugin 'altercation/vim-colors-solarized'
+    Plugin 'kien/rainbow_parentheses.vim'
+
+    Plugin 'pangloss/vim-javascript'
+    Plugin 'guns/vim-clojure-static'
     Plugin 'wavded/vim-stylus'
     Plugin 'mxw/vim-jsx'
-    Plugin 'tpope/vim-fugitive'
-    Plugin 'tpope/vim-surround'
+
+    Plugin 'SirVer/ultisnips'
+    Plugin 'honza/vim-snippets'
+    Plugin 'ervandew/supertab'
+    Plugin 'godlygeek/tabular'
+    Plugin 'ajh17/VimCompletesMe'
+
+    Plugin 'guns/vim-sexp'
     Plugin 'Yggdroot/indentLine'
-    Plugin 'elmcast/elm-vim'
+    Plugin 'cohama/lexima.vim'
+    Plugin 'tpope/vim-surround'
+    Plugin 'tpope/vim-fireplace'
 
     """ Give control to Vundle
     call vundle#end()
@@ -63,16 +68,14 @@ set nocompatible
     let g:javascript_enable_domhtmlcss=1
 
     " enable vim colors (solarized)
-    syntax on
-    let g:solarized_termcolors=256
-    set t_Co=256
+    syntax enable
     set background=dark
     colorscheme solarized
 
     " modify line-indent color
     let g:indentLine_color_term = 239
 
-    " remove trailing whitespace, persist cursor position
+    " remove trailing whitespace, persist cursor position on save
     function! <SID>StripTrailingWhitespaces()
         let l = line('.')
         let c = col('.')
@@ -86,9 +89,13 @@ set nocompatible
     set shiftwidth=4
     set expandtab
 
-    " ignore case when searching
+    " smart case sensitivity while searching
     set ignorecase
     set smartcase
+
+    " higlight /search
+    set hlsearch
+    set incsearch
 
     " persist undo
     set undodir=~/.vim/undo
@@ -98,12 +105,29 @@ set nocompatible
     set rnu
     set nu
 
-    " higlight /search
-    set hlsearch
-    set incsearch
-
     " change git-gutter's gutter background color
     highlight clear SignColumn
+
+    " solarized rainbow parens colors
+    let g:rbpt_colorpairs = [
+      \ [ '13', '#6c71c4'],
+      \ [ '5',  '#d33682'],
+      \ [ '1',  '#dc322f'],
+      \ [ '9',  '#cb4b16'],
+      \ [ '3',  '#b58900'],
+      \ [ '2',  '#859900'],
+      \ [ '6',  '#2aa198'],
+      \ [ '4',  '#268bd2'],
+      \ ]
+
+    " enable rainbow parentheses for all buffers
+    augroup rainbow_parentheses
+      au!
+      au VimEnter * RainbowParenthesesActivate
+      au BufEnter * RainbowParenthesesLoadRound
+      au BufEnter * RainbowParenthesesLoadSquare
+      au BufEnter * RainbowParenthesesLoadBraces
+    augroup END
 
     " additional files to ignore when searching with ctrl-p
     let g:ctrlp_custom_ignore = {
@@ -111,11 +135,6 @@ set nocompatible
       \ 'file': '\v\.(exe|so|dll)$',
       \ 'link': 'some_bad_symbolic_links',
       \ }
-
-    " make YCM compatible with UltiSnips (using supertab)
-    let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
-    let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
-    let g:SuperTabDefaultCompletionType = '<C-n>'
 
     " make UltiSnips pick up custom snippets in the vim/UltiSnips dir
     let g:UltiSnipsSnippetDirectories=["UltiSnips", "vim/UltiSnips"]
@@ -125,14 +144,7 @@ set nocompatible
     let g:UltiSnipsJumpForwardTrigger = "<tab>"
     let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
-    " force closed-pair jumping instead of inserting
-    let g:AutoPairsFlyMode = 1
-
-    " disable default easymotion
-    let g:EasyMotion_do_mapping = 0
-
-    " easymotion case insensitivity
-    let g:EasyMotion_smartcase = 1
+    let g:SuperTabDefaultCompletionType = '<C-n>'
 
 " /Configuration }
 
@@ -144,24 +156,40 @@ set nocompatible
     " <leader> -> ','
     let mapleader = ","
 
-    " jump anywhere with s{char}
-    nmap s <Plug>(easymotion-overwin-f)
-
     " map NERDTree to Ctrl+n
     map <C-t> :NERDTreeToggle<CR>
 
-    " insert newline without entering insert mode
+    " enter to insert newline without entering insert mode
     nmap <CR> o<Esc>
 
     " reselect text block after paste with gV
     nnoremap <expr> gV '`[' . getregtype(v:register)[0] . '`]'
 
-    " make < > shifts keep selection
+    " unmap many pain-inducing left hand ctrl-key sequences
+        " unmap window movement
+        nnoremap <C-w> <NOP>
+        " unmap q to prevent stupid mistakes
+        nnoremap qq <NOP>
+
+        " window page up /down
+        nnoremap <C-d> <NOP>
+        nnoremap <C-u> <NOP>
+        nnoremap q8 <C-d>
+        nnoremap q9 <C-u>
+
+        " window split / move
+        nnoremap q <C-w>
+
+        " remap autocomplete cylcling forward/back
+        inoremap qj <C-n>
+        inoremap qk <C-p>
+
+        " redo
+        nnoremap <C-r> <NOP>
+        nnoremap <S-U> <C-r>
+
+    " make < > indent changes maintain selection
     vnoremap < <gv
     vnoremap > >gv
 
-    " build elm files
-    nmap <leader>bb <Plug>(elm-make)
-    nmap <leader>bm <Plug>(elm-make-main)
-
-" /Keybindings }
+    " /Keybindings }
