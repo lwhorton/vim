@@ -17,9 +17,10 @@ set nocompatible
     Plugin 'mileszs/ack.vim'
     Plugin 'scrooloose/nerdtree'
     Plugin 'scrooloose/nerdcommenter'
-    Plugin 'airblade/vim-gitgutter'
+    "Plugin 'airblade/vim-gitgutter'
     Plugin 'kien/ctrlp.vim'
-    Plugin 'bling/vim-airline'
+    Plugin 'vim-airline/vim-airline'
+    Plugin 'vim-airline/vim-airline-themes'
 
     Plugin 'altercation/vim-colors-solarized'
     Plugin 'kien/rainbow_parentheses.vim'
@@ -36,10 +37,12 @@ set nocompatible
     Plugin 'ajh17/VimCompletesMe'
 
     Plugin 'guns/vim-sexp'
+    Plugin 'tpope/vim-sexp-mappings-for-regular-people.git'
     Plugin 'Yggdroot/indentLine'
-    Plugin 'cohama/lexima.vim'
+    "Plugin 'cohama/lexima.vim'
     Plugin 'tpope/vim-surround'
     Plugin 'tpope/vim-fireplace'
+    Plugin 'tpope/vim-repeat'
 
     """ Give control to Vundle
     call vundle#end()
@@ -57,25 +60,25 @@ set nocompatible
     " automatically change current directory to open file
     set autochdir
 
-    " no wrapping/auto-inserting of \n
+    "" no wrapping/auto-inserting of \n
     set nowrap
     set textwidth=0
 
-    " allow deleting text inserted before current insert mode started
+    "" allow deleting text inserted before current insert mode started
     set backspace=indent,eol,start
 
-    " enable html/css highlighting in js files
+    "" enable html/css highlighting in js files
     let g:javascript_enable_domhtmlcss=1
 
-    " enable vim colors (solarized)
+    "" enable vim colors (solarized)
     syntax enable
     set background=dark
     colorscheme solarized
 
-    " modify line-indent color
+    "" modify line-indent color
     let g:indentLine_color_term = 239
 
-    " remove trailing whitespace, persist cursor position on save
+    "" remove trailing whitespace, persist cursor position on save
     function! <SID>StripTrailingWhitespaces()
         let l = line('.')
         let c = col('.')
@@ -84,25 +87,25 @@ set nocompatible
     endfun
     autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 
-    " setup not-stupid tabs
+    "" setup not-stupid tabs
     set tabstop=4
     set shiftwidth=4
     set expandtab
 
-    " smart case sensitivity while searching
+    "" smart case sensitivity while searching
     set ignorecase
     set smartcase
 
-    " higlight /search
+    "" higlight /search
     set hlsearch
     set incsearch
 
-    " persist undo
+    "" persist undo
     set undodir=~/.vim/undo
     set undofile
 
-    " hybrid line numbers
-    set rnu
+    "" hybrid line numbers
+    "set rnu " vim cannot handle relative line numbers on files > 100 lines, too slow
     set nu
 
     " change git-gutter's gutter background color
@@ -120,7 +123,7 @@ set nocompatible
       \ [ '4',  '#268bd2'],
       \ ]
 
-    " enable rainbow parentheses for all buffers
+    "" enable rainbow parentheses for all buffers
     augroup rainbow_parentheses
       au!
       au VimEnter * RainbowParenthesesActivate
@@ -129,9 +132,13 @@ set nocompatible
       au BufEnter * RainbowParenthesesLoadBraces
     augroup END
 
+    " parse build.boot files as clj
+    autocmd BufNewFile,BufRead *.boot setf clojure
+    autocmd BufNewFile,BufRead *.boot set syntax=clojure
+
     " additional files to ignore when searching with ctrl-p
     let g:ctrlp_custom_ignore = {
-      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist|node_modules))$',
+      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist|node_modules|target|out))$',
       \ 'file': '\v\.(exe|so|dll)$',
       \ 'link': 'some_bad_symbolic_links',
       \ }
@@ -145,6 +152,16 @@ set nocompatible
     let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
     let g:SuperTabDefaultCompletionType = '<C-n>'
+
+    " status bar customization
+    let g:airline#extensions#tabline#fnamemod = ':.'
+    let g:airline#extensions#tabline#fnamecollapse = 0
+
+    " render airline when only 1 files is open
+    set laststatus=2
+
+    " disable auto-insert / auto-delete mode for clojure expressions
+    let g:sexp_enable_insert_mode_mappings = 0
 
 " /Configuration }
 
@@ -164,6 +181,10 @@ set nocompatible
 
     " reselect text block after paste with gV
     nnoremap <expr> gV '`[' . getregtype(v:register)[0] . '`]'
+
+    " remap q record because we're using it elsewhere
+    nnoremap Q q
+    nnoremap q <Nop>
 
     " unmap many pain-inducing left hand ctrl-key sequences
         " unmap window movement
