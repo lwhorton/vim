@@ -39,7 +39,7 @@ set nocompatible
     Plugin 'guns/vim-sexp'
     Plugin 'tpope/vim-sexp-mappings-for-regular-people.git'
     Plugin 'Yggdroot/indentLine'
-    "Plugin 'cohama/lexima.vim'
+    Plugin 'cohama/lexima.vim'
     Plugin 'tpope/vim-surround'
     Plugin 'tpope/vim-fireplace'
     Plugin 'tpope/vim-repeat'
@@ -62,7 +62,7 @@ set nocompatible
 
     "" no wrapping/auto-inserting of \n
     set nowrap
-    set textwidth=0
+    set textwidth=80
 
     "" allow deleting text inserted before current insert mode started
     set backspace=indent,eol,start
@@ -74,6 +74,9 @@ set nocompatible
     syntax enable
     set background=dark
     colorscheme solarized
+
+    " limit syntax highlighting otherwise the world stops
+    set synmaxcol=128
 
     "" modify line-indent color
     let g:indentLine_color_term = 239
@@ -136,12 +139,25 @@ set nocompatible
     autocmd BufNewFile,BufRead *.boot setf clojure
     autocmd BufNewFile,BufRead *.boot set syntax=clojure
 
+    " use ag instead of ack (much faster)
+    if executable('ag')
+        let g:ackprg = 'ag --vimgrep --nogroup --nocolor --column'
+    endif
+
     " additional files to ignore when searching with ctrl-p
     let g:ctrlp_custom_ignore = {
       \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist|node_modules|target|out))$',
       \ 'file': '\v\.(exe|so|dll)$',
       \ 'link': 'some_bad_symbolic_links',
       \ }
+
+    " cache ctrl-p to speed things up a bit
+    let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+
+    " use ag / silver_searcher for ctrl-p
+    if executable('ag')
+      let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+    endif
 
     " make UltiSnips pick up custom snippets in the vim/UltiSnips dir
     let g:UltiSnipsSnippetDirectories=["UltiSnips", "vim/UltiSnips"]
@@ -164,6 +180,13 @@ set nocompatible
     let g:sexp_enable_insert_mode_mappings = 0
 
 " /Configuration }
+
+""" { Custom Commands
+    " connect a cljs file to a running nREPL
+    command Ctn execute ":Connect localhost:1337"
+    command Ctc execute "Piggieback (figwheel-sidecar.repl-api/repl-env)"
+
+    " /Custom Commands }
 
 """ { Keybindings
 
@@ -209,8 +232,19 @@ set nocompatible
         nnoremap <C-r> <NOP>
         nnoremap <S-U> <C-r>
 
+        " jump to the symbol matching the one under the cursor
+        nnoremap ; %
+        vnoremap ; %
+
+        " jump to end of line
+        nnoremap ' $
+        vnoremap ' $
+
     " make < > indent changes maintain selection
     vnoremap < <gv
     vnoremap > >gv
+
+    " allow saving of files as sudo when I forgot to start using sudo
+    cmap w!! w !sudo tee > /dev/null %
 
     " /Keybindings }
