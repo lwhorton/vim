@@ -42,6 +42,12 @@ set nocompatible
     Plugin 'tpope/vim-surround'
     Plugin 'tpope/vim-fireplace'
     Plugin 'tpope/vim-repeat'
+    Plugin 'editorconfig/editorconfig-vim'
+    Bundle 'venantius/vim-eastwood'
+    Bundle 'venantius/vim-cljfmt'
+
+    Plugin 'jparise/vim-graphql'
+    Plugin 'leafgarland/typescript-vim'
 
     """ Give control to Vundle
     call vundle#end()
@@ -73,6 +79,10 @@ set nocompatible
     syntax enable
     set background=dark
     colorscheme solarized
+
+    "syntax enable
+    "set background=light
+    "colorscheme solarized
 
     " limit syntax highlighting otherwise the world stops
     set synmaxcol=128

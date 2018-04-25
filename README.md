@@ -16,6 +16,11 @@ vim .
 :PluginInstall
 ```
 
+## Ack actually needs to exist on your system
+```
+brew install ack
+```
+
 ## UltiSnips filetype recognotion doesn't work
 Vundle doesn't complete the installation process. UltiSnips needs a few more source files, but Vim only allows this directly in the home directory, so make a sym link:
 ```bash
