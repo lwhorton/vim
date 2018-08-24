@@ -29,6 +29,8 @@ set nocompatible
     Plugin 'wavded/vim-stylus'
     Plugin 'mxw/vim-jsx'
 
+    Plugin 'Chiel92/vim-autoformat'
+
     Plugin 'SirVer/ultisnips'
     Plugin 'honza/vim-snippets'
     Plugin 'ervandew/supertab'
@@ -43,11 +45,10 @@ set nocompatible
     Plugin 'tpope/vim-fireplace'
     Plugin 'tpope/vim-repeat'
     Plugin 'editorconfig/editorconfig-vim'
-    Bundle 'venantius/vim-eastwood'
-    Bundle 'venantius/vim-cljfmt'
 
     Plugin 'jparise/vim-graphql'
     Plugin 'leafgarland/typescript-vim'
+    Plugin 'elixir-editors/vim-elixir'
 
     """ Give control to Vundle
     call vundle#end()
@@ -120,6 +121,9 @@ set nocompatible
     "set rnu " vim cannot handle relative line numbers on files > 100 lines, too slow
     set nu
 
+    "" turn off json file quote hiding
+    set conceallevel=0
+
     " change git-gutter's gutter background color
     highlight clear SignColumn
 
@@ -155,7 +159,7 @@ set nocompatible
 
     " additional files to ignore when searching with ctrl-p
     let g:ctrlp_custom_ignore = {
-      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist|node_modules|target|out))$',
+      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist|node_modules|target|out|_build|deps))$',
       \ 'file': '\v\.(exe|so|dll)$',
       \ 'link': 'some_bad_symbolic_links',
       \ }
