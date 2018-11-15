@@ -30,6 +30,11 @@ mkdir ~/.vim/ftdetect
 ln -s ~/.vim/bundle/ultisnip/ftdetect/* ~/.vim/ftdetect
 ```
 
+Also if you have custom snippets, symlink them into the vim root:
+```bash
+ln -s ~/my_custom_snips ~/.vim/my_custom_snips
+```
+
 ## Get persistent undo's in different vim sessions
 ```bash
 mkdir ~/.vim/undo

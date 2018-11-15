@@ -13,42 +13,43 @@ set nocompatible
 
 """ { Plugins
 
-    Plugin 'mileszs/ack.vim'
-    Plugin 'scrooloose/nerdtree'
-    Plugin 'scrooloose/nerdcommenter'
-    "Plugin 'airblade/vim-gitgutter'
+    Plugin 'google/vim-searchindex'
+    Plugin 'jremmen/vim-ripgrep'
     Plugin 'kien/ctrlp.vim'
+    Plugin 'scrooloose/nerdcommenter'
+    Plugin 'tpope/vim-vinegar'
     Plugin 'vim-airline/vim-airline'
     Plugin 'vim-airline/vim-airline-themes'
 
     Plugin 'altercation/vim-colors-solarized'
     Plugin 'kien/rainbow_parentheses.vim'
 
-    Plugin 'pangloss/vim-javascript'
-    Plugin 'guns/vim-clojure-static'
-    Plugin 'wavded/vim-stylus'
-    Plugin 'mxw/vim-jsx'
+    Plugin 'SirVer/ultisnips'
+    Plugin 'ajh17/VimCompletesMe'
+    Plugin 'ervandew/supertab'
+
+    Plugin 'Yggdroot/indentLine'
+    Plugin 'christoomey/vim-tmux-navigator'
+    Plugin 'cohama/lexima.vim'
+    Plugin 'editorconfig/editorconfig-vim'
+    Plugin 'guns/vim-sexp'
+    Plugin 'tpope/vim-repeat'
+    Plugin 'tpope/vim-sexp-mappings-for-regular-people.git'
+    Plugin 'tpope/vim-surround'
+
+    Plugin 'JamshedVesuna/vim-markdown-preview'
+    Plugin 'tpope/vim-fireplace'
 
     Plugin 'Chiel92/vim-autoformat'
-
-    Plugin 'SirVer/ultisnips'
-    Plugin 'honza/vim-snippets'
-    Plugin 'ervandew/supertab'
-    Plugin 'godlygeek/tabular'
-    Plugin 'ajh17/VimCompletesMe'
-
-    Plugin 'guns/vim-sexp'
-    Plugin 'tpope/vim-sexp-mappings-for-regular-people.git'
-    Plugin 'Yggdroot/indentLine'
-    Plugin 'cohama/lexima.vim'
-    Plugin 'tpope/vim-surround'
-    Plugin 'tpope/vim-fireplace'
-    Plugin 'tpope/vim-repeat'
-    Plugin 'editorconfig/editorconfig-vim'
-
+    Plugin 'elixir-editors/vim-elixir'
+    Plugin 'guns/vim-clojure-static'
     Plugin 'jparise/vim-graphql'
     Plugin 'leafgarland/typescript-vim'
-    Plugin 'elixir-editors/vim-elixir'
+    Plugin 'mhinz/vim-mix-format'
+    Plugin 'mxw/vim-jsx'
+    Plugin 'pangloss/vim-javascript'
+    Plugin 'plasticboy/vim-markdown'
+    Plugin 'wavded/vim-stylus'
 
     """ Give control to Vundle
     call vundle#end()
@@ -172,15 +173,14 @@ set nocompatible
       let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
     endif
 
-    " make UltiSnips pick up custom snippets in the vim/UltiSnips dir
-    let g:UltiSnipsSnippetDirectories=["UltiSnips", "vim/UltiSnips"]
+    " make UltiSnips pick up custom snippets (which must be symlinked to .vim/*)
+    let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_ulti_snips"]
 
     " better key bindings for UltiSnipsExpandTrigger
     let g:UltiSnipsExpandTrigger = "<tab>"
     let g:UltiSnipsJumpForwardTrigger = "<tab>"
     let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-
-    let g:SuperTabDefaultCompletionType = '<C-n>'
+    let g:UltiSnipsUsePythonVersion = 2
 
     " status bar customization
     let g:airline#extensions#tabline#fnamemod = ':.'
@@ -192,12 +192,22 @@ set nocompatible
     " disable auto-insert / auto-delete mode for clojure expressions
     let g:sexp_enable_insert_mode_mappings = 0
 
+    " disable folding markdown
+    let g:vim_markdown_folding_disabled = 1
+    " disable syntax hiding
+    let g:vim_markdown_conceal = 0
+
+    " markdown preview to ctrl-m
+    let vim_markdown_preview_hotkey='<C-m>'
+    " use gh flavored markdown via grip
+    let vim_markdown_preview_github=1
+    let vim_markdown_preview_browser='Google Chrome'
+
 " /Configuration }
 
 """ { Custom Commands
-    " connect a cljs file to a running nREPL
-    command Ctn execute ":Connect localhost:1337"
-    command Ctc execute "Piggieback (figwheel-sidecar.repl-api/repl-env)"
+    " reloaded workflow reset, refresh
+    "command <Leader>r execute ""
 
     " /Custom Commands }
 
@@ -208,9 +218,6 @@ set nocompatible
 
     " <leader> -> ','
     let mapleader = ","
-
-    " map NERDTree to Ctrl+n
-    map <C-t> :NERDTreeToggle<CR>
 
     " enter to insert newline without entering insert mode
     nmap <CR> o<Esc>
@@ -223,8 +230,8 @@ set nocompatible
     nnoremap q <Nop>
 
     " unmap many pain-inducing left hand ctrl-key sequences
-        " unmap window movement
-        nnoremap <C-w> <NOP>
+        " plugin handles mapping C-direction for easier split nav
+
         " unmap q to prevent stupid mistakes
         nnoremap qq <NOP>
 
@@ -234,10 +241,10 @@ set nocompatible
         nnoremap q8 <C-d>
         nnoremap q9 <C-u>
 
-        " window split / move
+        " window split / move to q instead of C-w
         nnoremap q <C-w>
 
-        " remap autocomplete cylcling forward/back
+        " remap autocomplete cycling forward/back
         inoremap qj <C-n>
         inoremap qk <C-p>
 
