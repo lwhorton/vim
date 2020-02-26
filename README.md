@@ -34,6 +34,8 @@ Also if you have custom snippets, symlink them into the vim root:
 ```bash
 ln -s ~/my_custom_snips ~/.vim/my_custom_snips
 ```
+For typescript/javascript, just `ln -s /path/to/javascript.snippets
+/path/to/typescript.snippets` because they should be basically identical.
 
 ## Get persistent undo's in different vim sessions
 ```bash

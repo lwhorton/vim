@@ -27,6 +27,7 @@ set nocompatible
     Plugin 'SirVer/ultisnips'
     Plugin 'ajh17/VimCompletesMe'
     Plugin 'ervandew/supertab'
+    Plugin 'prettier/vim-prettier'
 
     Plugin 'Yggdroot/indentLine'
     Plugin 'christoomey/vim-tmux-navigator'
@@ -43,6 +44,7 @@ set nocompatible
     Plugin 'Chiel92/vim-autoformat'
     Plugin 'elixir-editors/vim-elixir'
     Plugin 'guns/vim-clojure-static'
+    Plugin 'udalov/kotlin-vim'
     Plugin 'jparise/vim-graphql'
     Plugin 'leafgarland/typescript-vim'
     Plugin 'mhinz/vim-mix-format'
@@ -167,6 +169,8 @@ set nocompatible
 
     " cache ctrl-p to speed things up a bit
     let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+    " set local working dir accordingly
+    let g:ctrlp_working_path_mode = 'ra'
 
     " use ag / silver_searcher for ctrl-p
     if executable('ag')
@@ -192,8 +196,13 @@ set nocompatible
     " disable auto-insert / auto-delete mode for clojure expressions
     let g:sexp_enable_insert_mode_mappings = 0
 
-    " disable folding markdown
+    " disable folding markdown and all keybinds
     let g:vim_markdown_folding_disabled = 1
+    let g:vim_markdown_no_default_key_mappings = 1
+    " don't automatically insert indent on list newline
+    let g:vim_markdown_new_list_item_indent = 0
+    " dont automatically insert bullets
+     let g:vim_markdown_auto_insert_bullets = 0
     " disable syntax hiding
     let g:vim_markdown_conceal = 0
 
@@ -204,12 +213,6 @@ set nocompatible
     let vim_markdown_preview_browser='Google Chrome'
 
 " /Configuration }
-
-""" { Custom Commands
-    " reloaded workflow reset, refresh
-    "command <Leader>r execute ""
-
-    " /Custom Commands }
 
 """ { Keybindings
 
@@ -268,3 +271,11 @@ set nocompatible
     cmap w!! w !sudo tee > /dev/null %
 
     " /Keybindings }
+
+""" { Custom workflow commands
+    " reloaded workflow reset, refresh
+    nnoremap <leader>rs :Eval (user/reset)<CR>
+    nnoremap <leader>rf :Eval (clojure.tools.namespace.repl/refresh)<CR>
+    nnoremap <leader>ra :Eval (clojure.tools.namespace.repl/refresh-all)<CR>
+
+    " /Custom workflow commands }

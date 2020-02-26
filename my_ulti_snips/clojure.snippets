@@ -1,16 +1,16 @@
 # logging
-snippet rlog "require-macros logging" b
-(:require-macros
-  [aft.logging.core :refer [log]]
-  )$0
-endsnippet
-
 snippet ns "namespace" b
 (ns $1
   (:require
     []
     )
   )
+
+$0
+endsnippet
+
+snippet pp "pprint"
+(clojure.pprint/pprint $0)
 endsnippet
 
 snippet nsr "namespace with require" b
