@@ -20,6 +20,7 @@ set nocompatible
     Plugin 'tpope/vim-vinegar'
     Plugin 'vim-airline/vim-airline'
     Plugin 'vim-airline/vim-airline-themes'
+    Plugin 'tpope/vim-fugitive'
 
     Plugin 'altercation/vim-colors-solarized'
     Plugin 'kien/rainbow_parentheses.vim'
@@ -104,8 +105,8 @@ set nocompatible
     autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 
     "" setup not-stupid tabs
-    set tabstop=4
-    set shiftwidth=4
+    set tabstop=2
+    set shiftwidth=2
     set expandtab
 
     "" smart case sensitivity while searching
@@ -155,6 +156,10 @@ set nocompatible
     autocmd BufNewFile,BufRead *.boot setf clojure
     autocmd BufNewFile,BufRead *.boot set syntax=clojure
 
+    " clj-static formatting, per aclaimant
+    let g:clojure_fuzzy_indent_patterns = ['^doto', '^with', '^def', '^let', 'go-loop', 'match', '^context', '^GET', '^PUT', '^POST', '^PATCH', '^DELETE', '^ANY', 'this-as', '^are', '^dofor']
+    let g:clojure_align_multiline_strings = 1
+
     " use ag instead of ack (much faster)
     if executable('ag')
         let g:ackprg = 'ag --vimgrep --nogroup --nocolor --column'
@@ -162,7 +167,7 @@ set nocompatible
 
     " additional files to ignore when searching with ctrl-p
     let g:ctrlp_custom_ignore = {
-      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist|node_modules|target|out|_build|deps))$',
+      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist|node_modules|target|out|_build|deps|resources))$',
       \ 'file': '\v\.(exe|so|dll)$',
       \ 'link': 'some_bad_symbolic_links',
       \ }
@@ -271,6 +276,28 @@ set nocompatible
     cmap w!! w !sudo tee > /dev/null %
 
     " /Keybindings }
+
+    " Functions {
+    " sort clojure namespace requires
+    function! CljSortRequireFn(find)
+      let l:initialLine = line(".")
+      let l:initialCol = col(".")
+      exec "keepjumps normal gg"
+      exe "keepjumps /". a:find ."$"
+      let l:startLine = line(".") + 1
+      if l:startLine != 2
+        exe "keepjumps normal ^%"
+        keepjumps let l:endLine = line(".")
+        exe "keepjumps normal i\<CR>\<ESC>"
+        let l:closingLine = l:endLine + 1
+        exe l:startLine.",".l:endLine."sort"
+        exe "keepjumps normal ".l:closingLine."gg"
+        exe "keepjumps normal kJ"
+      endif
+      call cursor(l:initialLine, l:initialCol)
+    endfunction
+    command! -nargs=1 CljSortRequire call CljSortRequireFn(<q-args>)
+    " } /Functions
 
 """ { Custom workflow commands
     " reloaded workflow reset, refresh
