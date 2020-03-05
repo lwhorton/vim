@@ -1,63 +1,57 @@
 set nocompatible
 
-""" Initialize Vundle {
+""" Initialize Plug {
+  call plug#begin('~/.vim/bundle')
 
-    filetype off
-    " set the runtime path to include Vundle
-    set rtp+=~/.vim/bundle/Vundle.vim
-    call vundle#begin()
+""" /Initialize Plug }
 
-    Plugin 'VundleVim/Vundle.vim'
+""" { Plugs
 
-""" /Initialize Vundle }
+    Plug 'google/vim-searchindex'
+    Plug 'jremmen/vim-ripgrep'
+    Plug 'kien/ctrlp.vim'
+    Plug 'scrooloose/nerdcommenter'
+    Plug 'tpope/vim-vinegar'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'tpope/vim-fugitive'
 
-""" { Plugins
+    Plug 'altercation/vim-colors-solarized'
+    Plug 'kien/rainbow_parentheses.vim'
 
-    Plugin 'google/vim-searchindex'
-    Plugin 'jremmen/vim-ripgrep'
-    Plugin 'kien/ctrlp.vim'
-    Plugin 'scrooloose/nerdcommenter'
-    Plugin 'tpope/vim-vinegar'
-    Plugin 'vim-airline/vim-airline'
-    Plugin 'vim-airline/vim-airline-themes'
-    Plugin 'tpope/vim-fugitive'
+    Plug 'SirVer/ultisnips'
+    Plug 'ajh17/VimCompletesMe'
+    Plug 'ervandew/supertab'
+    Plug 'prettier/vim-prettier'
 
-    Plugin 'altercation/vim-colors-solarized'
-    Plugin 'kien/rainbow_parentheses.vim'
+    Plug 'Yggdroot/indentLine'
+    Plug 'christoomey/vim-tmux-navigator'
+    Plug 'cohama/lexima.vim'
+    Plug 'editorconfig/editorconfig-vim'
+    Plug 'guns/vim-sexp'
+    Plug 'tpope/vim-repeat'
+    Plug 'tpope/vim-sexp-mappings-for-regular-people'
+    Plug 'tpope/vim-surround'
 
-    Plugin 'SirVer/ultisnips'
-    Plugin 'ajh17/VimCompletesMe'
-    Plugin 'ervandew/supertab'
-    Plugin 'prettier/vim-prettier'
+    Plug 'JamshedVesuna/vim-markdown-preview'
+    Plug 'tpope/vim-fireplace'
 
-    Plugin 'Yggdroot/indentLine'
-    Plugin 'christoomey/vim-tmux-navigator'
-    Plugin 'cohama/lexima.vim'
-    Plugin 'editorconfig/editorconfig-vim'
-    Plugin 'guns/vim-sexp'
-    Plugin 'tpope/vim-repeat'
-    Plugin 'tpope/vim-sexp-mappings-for-regular-people.git'
-    Plugin 'tpope/vim-surround'
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    Plug 'Chiel92/vim-autoformat'
+    Plug 'elixir-editors/vim-elixir'
+    Plug 'guns/vim-clojure-static'
+    Plug 'udalov/kotlin-vim'
+    Plug 'jparise/vim-graphql'
+    Plug 'leafgarland/typescript-vim'
+    Plug 'mhinz/vim-mix-format'
+    Plug 'mxw/vim-jsx'
+    Plug 'pangloss/vim-javascript'
+    Plug 'plasticboy/vim-markdown'
+    Plug 'wavded/vim-stylus'
 
-    Plugin 'JamshedVesuna/vim-markdown-preview'
-    Plugin 'tpope/vim-fireplace'
-
-    Plugin 'Chiel92/vim-autoformat'
-    Plugin 'elixir-editors/vim-elixir'
-    Plugin 'guns/vim-clojure-static'
-    Plugin 'udalov/kotlin-vim'
-    Plugin 'jparise/vim-graphql'
-    Plugin 'leafgarland/typescript-vim'
-    Plugin 'mhinz/vim-mix-format'
-    Plugin 'mxw/vim-jsx'
-    Plugin 'pangloss/vim-javascript'
-    Plugin 'plasticboy/vim-markdown'
-    Plugin 'wavded/vim-stylus'
-
-    """ Give control to Vundle
-    call vundle#end()
+    call plug#end()
     filetype plugin indent on
-" /Plugins }
+" /Plugs }
 
 """ { Configuration
 
@@ -217,6 +211,20 @@ set nocompatible
     let vim_markdown_preview_github=1
     let vim_markdown_preview_browser='Google Chrome'
 
+    " CoC code navigation
+    nmap <silent> gd <Plug>(coc-definition)
+    nmap <silent> gr <Plug>(coc-references)
+    nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+    " CoC show-doc
+    function! s:show_documentation()
+      if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
+      else
+        call CocAction('doHover')
+      endif
+    endfunction
+
 " /Configuration }
 
 """ { Keybindings
@@ -297,6 +305,11 @@ set nocompatible
       call cursor(l:initialLine, l:initialCol)
     endfunction
     command! -nargs=1 CljSortRequire call CljSortRequireFn(<q-args>)
+
+    function! Expand(exp) abort
+      let l:result = expand(a:exp)
+      return l:result ==# '' ? '' : "file://" . l:result
+    endfunction
     " } /Functions
 
 """ { Custom workflow commands
@@ -304,5 +317,10 @@ set nocompatible
     nnoremap <leader>rs :Eval (user/reset)<CR>
     nnoremap <leader>rf :Eval (clojure.tools.namespace.repl/refresh)<CR>
     nnoremap <leader>ra :Eval (clojure.tools.namespace.repl/refresh-all)<CR>
+
+    " auto-import missing clojure libs
+    nnoremap <silent> cram :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    " clean clojure namespaces (sort them)
+    nnoremap <silent> crcn :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
 
     " /Custom workflow commands }

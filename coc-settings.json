@@ -1,0 +1,16 @@
+{
+  "suggest.snippetIndicator": "🍦",
+  "coc.preferences.useQuickfixForLocations": true,
+  "languageserver": {
+    "clojure-lsp": {
+      "command": "/Users/luke/clojure-lsp",
+      "filetypes": ["clojure"],
+      "rootPatterns": ["project.clj"],
+      "additionalSchemes": ["jar", "zipfile"],
+      "trace.server": "verbose",
+      "initializationOptions": {
+        "ignore-classpath-directories": true
+      }
+    }
+  }
+}
