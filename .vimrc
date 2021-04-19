@@ -9,22 +9,19 @@ set nocompatible
 
     Plug 'google/vim-searchindex'
     Plug 'jremmen/vim-ripgrep'
-    Plug 'kien/ctrlp.vim'
+    Plug 'ctrlpvim/ctrlp.vim'
     Plug 'scrooloose/nerdcommenter'
     Plug 'tpope/vim-vinegar'
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
     Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-rhubarb'
+    Plug 'vim-scripts/dbext.vim'
+    Plug 'vim-scripts/YankRing.vim'
 
-    Plug 'altercation/vim-colors-solarized'
+    Plug 'iCyMind/NeoSolarized'
     Plug 'kien/rainbow_parentheses.vim'
 
-    Plug 'SirVer/ultisnips'
-    Plug 'ajh17/VimCompletesMe'
-    Plug 'ervandew/supertab'
-    Plug 'prettier/vim-prettier'
-
-    Plug 'Yggdroot/indentLine'
     Plug 'christoomey/vim-tmux-navigator'
     Plug 'cohama/lexima.vim'
     Plug 'editorconfig/editorconfig-vim'
@@ -35,8 +32,11 @@ set nocompatible
 
     Plug 'JamshedVesuna/vim-markdown-preview'
     Plug 'tpope/vim-fireplace'
+    Plug 'tpope/vim-salve'
 
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    Plug 'yssl/QFEnter'
+    Plug 'Yggdroot/indentLine'
     Plug 'Chiel92/vim-autoformat'
     Plug 'elixir-editors/vim-elixir'
     Plug 'guns/vim-clojure-static'
@@ -48,6 +48,8 @@ set nocompatible
     Plug 'pangloss/vim-javascript'
     Plug 'plasticboy/vim-markdown'
     Plug 'wavded/vim-stylus'
+    Plug 'b4b4r07/vim-sqlfmt'
+    Plug 'SirVer/ultisnips'
 
     call plug#end()
     filetype plugin indent on
@@ -74,20 +76,22 @@ set nocompatible
     "" enable html/css highlighting in js files
     let g:javascript_enable_domhtmlcss=1
 
-    "" enable vim colors (solarized)
+    "" enable vim colors (solarized dark, high contrast)
+    set termguicolors
     syntax enable
+    colorscheme NeoSolarized
     set background=dark
-    colorscheme solarized
-
-    "syntax enable
-    "set background=light
-    "colorscheme solarized
+    let g:neosolarized_contrast = "high"
 
     " limit syntax highlighting otherwise the world stops
-    set synmaxcol=128
+    set synmaxcol=256
 
-    "" modify line-indent color
+    " modify line-indent color
     let g:indentLine_color_term = 239
+
+    " turn off indentLine's fucked up concealevel and concealcursor
+    let g:indentLine_conceallevel = 0
+    let g:indentLine_concealcursor = ''
 
     "" remove trailing whitespace, persist cursor position on save
     function! <SID>StripTrailingWhitespaces()
@@ -119,7 +123,7 @@ set nocompatible
     "set rnu " vim cannot handle relative line numbers on files > 100 lines, too slow
     set nu
 
-    "" turn off json file quote hiding
+    "" turn off all character hiding (like hiding of ": in json/markdown files)
     set conceallevel=0
 
     " change git-gutter's gutter background color
@@ -150,13 +154,21 @@ set nocompatible
     autocmd BufNewFile,BufRead *.boot setf clojure
     autocmd BufNewFile,BufRead *.boot set syntax=clojure
 
+    " remove text width limits on these filetype
+    autocmd bufreadpre *.csv setlocal textwidth=0
+
     " clj-static formatting, per aclaimant
-    let g:clojure_fuzzy_indent_patterns = ['^doto', '^with', '^def', '^let', 'go-loop', 'match', '^context', '^GET', '^PUT', '^POST', '^PATCH', '^DELETE', '^ANY', 'this-as', '^are', '^dofor']
+    let g:clojure_fuzzy_indent_patterns = ['^doto', '^with', '^def', '^let', 'go-loop', 'match', '^context', '^GET', '^PUT', '^POST', '^PATCH', '^DELETE', '^ANY', 'this-as', '^are', '^dofor', 'attempt-all', 'when-failed']
     let g:clojure_align_multiline_strings = 1
 
     " use ag instead of ack (much faster)
     if executable('ag')
         let g:ackprg = 'ag --vimgrep --nogroup --nocolor --column'
+    endif
+
+    " use ag / silver_searcher for ctrl-p
+    if executable('ag')
+      let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
     endif
 
     " additional files to ignore when searching with ctrl-p
@@ -166,18 +178,14 @@ set nocompatible
       \ 'link': 'some_bad_symbolic_links',
       \ }
 
-    " cache ctrl-p to speed things up a bit
-    let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
     " set local working dir accordingly
     let g:ctrlp_working_path_mode = 'ra'
 
-    " use ag / silver_searcher for ctrl-p
-    if executable('ag')
-      let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    endif
+    " speed up ctrl p by caching in a single place
+    let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
 
     " make UltiSnips pick up custom snippets (which must be symlinked to .vim/*)
-    let g:UltiSnipsSnippetDirectories=["UltiSnips", "my_ulti_snips"]
+    let g:UltiSnipsSnippetDirectories=[$HOME, "UltiSnips", "my_ulti_snips"]
 
     " better key bindings for UltiSnipsExpandTrigger
     let g:UltiSnipsExpandTrigger = "<tab>"
@@ -211,6 +219,12 @@ set nocompatible
     let vim_markdown_preview_github=1
     let vim_markdown_preview_browser='Google Chrome'
 
+    " display yankring w/ leader-p (copy/paste history)
+    nnoremap <leader>p :YRShow<CR>
+    " unmap the ctrl-p/n craziness
+    let g:yankring_replace_n_pkey = ''
+    let g:yankring_replace_n_nkey = ''
+
     " CoC code navigation
     nmap <silent> gd <Plug>(coc-definition)
     nmap <silent> gr <Plug>(coc-references)
@@ -234,6 +248,7 @@ set nocompatible
 
     " <leader> -> ','
     let mapleader = ","
+    let maplocalleader = ","
 
     " enter to insert newline without entering insert mode
     nmap <CR> o<Esc>
@@ -260,10 +275,6 @@ set nocompatible
         " window split / move to q instead of C-w
         nnoremap q <C-w>
 
-        " remap autocomplete cycling forward/back
-        inoremap qj <C-n>
-        inoremap qk <C-p>
-
         " redo
         nnoremap <C-r> <NOP>
         nnoremap <S-U> <C-r>
@@ -282,6 +293,12 @@ set nocompatible
 
     " allow saving of files as sudo when I forgot to start using sudo
     cmap w!! w !sudo tee > /dev/null %
+
+    " in quickfix window, open file under cursor vertical/horizontal
+    let g:qfenter_keymap = {}
+    let g:qfenter_keymap.open = ['<CR>']
+    let g:qfenter_keymap.hopen = ['<Leader>j']
+    let g:qfenter_keymap.vopen = ['<Leader>k']
 
     " /Keybindings }
 
@@ -310,6 +327,9 @@ set nocompatible
       let l:result = expand(a:exp)
       return l:result ==# '' ? '' : "file://" . l:result
     endfunction
+
+    "
+
     " } /Functions
 
 """ { Custom workflow commands
@@ -322,5 +342,19 @@ set nocompatible
     nnoremap <silent> cram :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
     " clean clojure namespaces (sort them)
     nnoremap <silent> crcn :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    " move form into let
+    nnoremap <silent> crml :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'move-to-let', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Binding name: ')]})<CR>
+    " extract form into function
+    nnoremap <silent> cref :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Function name: ')]})<CR>
+    " rename symbol under cursor
+    nmap <silent> crrn <Plug>(coc-rename)
+
+    " auto-format
+    vmap <leader>f <Plug>(coc-format-selected)
+    nmap <leader>f <Plug>(coc-format-selected)
+    nmap <leader>rn <Plug>(coc-rename)
+
+    " highlight words without jumping the cursor randomly
+    nnoremap * *``
 
     " /Custom workflow commands }

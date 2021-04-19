@@ -3,7 +3,7 @@
   "coc.preferences.useQuickfixForLocations": true,
   "languageserver": {
     "clojure-lsp": {
-      "command": "/Users/luke/clojure-lsp",
+      "command": "/Users/luke/dev/bin/clojure-lsp",
       "filetypes": ["clojure"],
       "rootPatterns": ["project.clj"],
       "additionalSchemes": ["jar", "zipfile"],
