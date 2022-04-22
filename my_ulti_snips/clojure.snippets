@@ -13,6 +13,13 @@ snippet pp "pprint"
 (clojure.pprint/pprint $0)
 endsnippet
 
+snippet co "rich comment block" b
+(comment
+	$1
+)
+endsnippet
+
+
 snippet nsr "namespace with require" b
 (ns $1
   (:require
@@ -52,6 +59,6 @@ endsnippet
 # aclaimant
 snippet tis "transaction-in"
 (aclaimant.services.core.db.customer-schema.fns/transaction-in-schema
-  "svc"
+  "$1"
   $0)
 endsnippet

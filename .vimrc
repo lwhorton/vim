@@ -8,8 +8,6 @@ set nocompatible
 """ { Plugs
 
     Plug 'google/vim-searchindex'
-    Plug 'jremmen/vim-ripgrep'
-    Plug 'ctrlpvim/ctrlp.vim'
     Plug 'scrooloose/nerdcommenter'
     Plug 'tpope/vim-vinegar'
     Plug 'vim-airline/vim-airline'
@@ -17,25 +15,27 @@ set nocompatible
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-rhubarb'
     Plug 'vim-scripts/dbext.vim'
+    Plug 'cohama/lexima.vim'
     Plug 'vim-scripts/YankRing.vim'
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
 
     Plug 'iCyMind/NeoSolarized'
     Plug 'kien/rainbow_parentheses.vim'
 
     Plug 'christoomey/vim-tmux-navigator'
-    Plug 'cohama/lexima.vim'
     Plug 'editorconfig/editorconfig-vim'
     Plug 'guns/vim-sexp'
-    Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-sexp-mappings-for-regular-people'
+    Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
-
     Plug 'JamshedVesuna/vim-markdown-preview'
     Plug 'tpope/vim-fireplace'
     Plug 'tpope/vim-salve'
-
+    Plug 'SirVer/ultisnips'
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
     Plug 'yssl/QFEnter'
+
     Plug 'Yggdroot/indentLine'
     Plug 'Chiel92/vim-autoformat'
     Plug 'elixir-editors/vim-elixir'
@@ -49,7 +49,6 @@ set nocompatible
     Plug 'plasticboy/vim-markdown'
     Plug 'wavded/vim-stylus'
     Plug 'b4b4r07/vim-sqlfmt'
-    Plug 'SirVer/ultisnips'
 
     call plug#end()
     filetype plugin indent on
@@ -62,9 +61,6 @@ set nocompatible
 
     " no swap files
     set noswapfile
-
-    " automatically change current directory to open file
-    set autochdir
 
     "" no wrapping/auto-inserting of \n
     set nowrap
@@ -130,25 +126,25 @@ set nocompatible
     highlight clear SignColumn
 
     " solarized rainbow parens colors
-    let g:rbpt_colorpairs = [
-      \ [ '13', '#6c71c4'],
-      \ [ '5',  '#d33682'],
-      \ [ '1',  '#dc322f'],
-      \ [ '9',  '#cb4b16'],
-      \ [ '3',  '#b58900'],
-      \ [ '2',  '#859900'],
-      \ [ '6',  '#2aa198'],
-      \ [ '4',  '#268bd2'],
-      \ ]
+    "let g:rbpt_colorpairs = [
+      "\ [ '13', '#6c71c4'],
+      "\ [ '5',  '#d33682'],
+      "\ [ '1',  '#dc322f'],
+      "\ [ '9',  '#cb4b16'],
+      "\ [ '3',  '#b58900'],
+      "\ [ '2',  '#859900'],
+      "\ [ '6',  '#2aa198'],
+      "\ [ '4',  '#268bd2'],
+      "\ ]
 
-    "" enable rainbow parentheses for all buffers
-    augroup rainbow_parentheses
-      au!
-      au VimEnter * RainbowParenthesesActivate
-      au BufEnter * RainbowParenthesesLoadRound
-      au BufEnter * RainbowParenthesesLoadSquare
-      au BufEnter * RainbowParenthesesLoadBraces
-    augroup END
+    """ enable rainbow parentheses for all buffers
+    "augroup rainbow_parentheses
+      "au!
+      "au VimEnter * RainbowParenthesesActivate
+      "au BufEnter * RainbowParenthesesLoadRound
+      "au BufEnter * RainbowParenthesesLoadSquare
+      "au BufEnter * RainbowParenthesesLoadBraces
+    "augroup END
 
     " parse build.boot files as clj
     autocmd BufNewFile,BufRead *.boot setf clojure
@@ -161,28 +157,27 @@ set nocompatible
     let g:clojure_fuzzy_indent_patterns = ['^doto', '^with', '^def', '^let', 'go-loop', 'match', '^context', '^GET', '^PUT', '^POST', '^PATCH', '^DELETE', '^ANY', 'this-as', '^are', '^dofor', 'attempt-all', 'when-failed']
     let g:clojure_align_multiline_strings = 1
 
-    " use ag instead of ack (much faster)
-    if executable('ag')
-        let g:ackprg = 'ag --vimgrep --nogroup --nocolor --column'
-    endif
+    " fzf: pin preview to bottom
+    let g:fzf_layout = {'down': '80%'}
 
-    " use ag / silver_searcher for ctrl-p
-    if executable('ag')
-      let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    endif
+    " enable symbol-searching via rg through fzf window (with reasonable defaults/ignores)
+    function! RipgrepFzfSymbol(query, fullscreen)
+      let thing = "rg --column --line-number --no-heading --color=always --smart-case"
+          \ . " -g '*.{clj,cljc,cljs,edn,js,json,md,styl,html,config,conf,scss,yml,env}'"
+          \ . " -g '{resources/migrations}/*'"
+          \ . " -g '!*.{min.js,js.map,cache.json,externs.js,swp,o,zip}'"
+          \ . " -g '!{.git,node_modules,vendor}/*'"
+          \ . " "
+          \ . shellescape(a:query)
+      call fzf#vim#grep(thing, 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4.. --bind ctrl-j:up,ctrl-k:down'}), a:fullscreen)
+    endfunction
 
-    " additional files to ignore when searching with ctrl-p
-    let g:ctrlp_custom_ignore = {
-      \ 'dir':  '\v[\/]((\.(git|hg|svn))|(build|dist|node_modules|target|out|_build|deps|resources))$',
-      \ 'file': '\v\.(exe|so|dll)$',
-      \ 'link': 'some_bad_symbolic_links',
-      \ }
+    " invoke symbol searching fzf
+    command! -nargs=* -bang Rgs call RipgrepFzfSymbol(<q-args>, <bang>0)
 
-    " set local working dir accordingly
-    let g:ctrlp_working_path_mode = 'ra'
-
-    " speed up ctrl p by caching in a single place
-    let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
+    " file searching fzf
+    command! -nargs=* -bang -complete=dir Files
+          \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--delimiter', ':', '--bind', 'ctrl-j:up,ctrl-k:down', '--info', 'inline', '--height', '40%']}), <bang>0)
 
     " make UltiSnips pick up custom snippets (which must be symlinked to .vim/*)
     let g:UltiSnipsSnippetDirectories=[$HOME, "UltiSnips", "my_ulti_snips"]
@@ -224,6 +219,10 @@ set nocompatible
     " unmap the ctrl-p/n craziness
     let g:yankring_replace_n_pkey = ''
     let g:yankring_replace_n_nkey = ''
+
+    " dont auto-insert for strings (super annoying) by overriding defaults
+    call lexima#add_rule({'char': '"', 'input_after': ''})
+    call lexima#add_rule({'char': "'", 'input_after': ''})
 
     " CoC code navigation
     nmap <silent> gd <Plug>(coc-definition)
@@ -297,8 +296,8 @@ set nocompatible
     " in quickfix window, open file under cursor vertical/horizontal
     let g:qfenter_keymap = {}
     let g:qfenter_keymap.open = ['<CR>']
-    let g:qfenter_keymap.hopen = ['<Leader>j']
-    let g:qfenter_keymap.vopen = ['<Leader>k']
+    let g:qfenter_keymap.hopen = ['<leader>j']
+    let g:qfenter_keymap.vopen = ['<leader>k']
 
     " /Keybindings }
 
@@ -328,8 +327,6 @@ set nocompatible
       return l:result ==# '' ? '' : "file://" . l:result
     endfunction
 
-    "
-
     " } /Functions
 
 """ { Custom workflow commands
@@ -348,6 +345,17 @@ set nocompatible
     nnoremap <silent> cref :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Function name: ')]})<CR>
     " rename symbol under cursor
     nmap <silent> crrn <Plug>(coc-rename)
+    " auto threaders / unwinders
+    nnoremap <silent> crtf :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> crtl :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> crtfa :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> crtla :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> cruw :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-thread', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> crua :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+
+    " search across file contenis with rip-grep, using fzfs syntax and window
+    nnoremap <silent> <C-s> :Rgs<CR>
+    nnoremap <silent> <C-p> :Files<CR>
 
     " auto-format
     vmap <leader>f <Plug>(coc-format-selected)
