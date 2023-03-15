@@ -22,6 +22,8 @@ set nocompatible
 
     Plug 'iCyMind/NeoSolarized'
     Plug 'kien/rainbow_parentheses.vim'
+    Plug 'hrsh7th/vim-vsnip'
+    Plug 'hrsh7th/vim-vsnip-integ'
 
     Plug 'christoomey/vim-tmux-navigator'
     Plug 'editorconfig/editorconfig-vim'
@@ -29,12 +31,15 @@ set nocompatible
     Plug 'tpope/vim-sexp-mappings-for-regular-people'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
-    Plug 'JamshedVesuna/vim-markdown-preview'
     Plug 'tpope/vim-fireplace'
     Plug 'tpope/vim-salve'
-    Plug 'SirVer/ultisnips'
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
     Plug 'yssl/QFEnter'
+
+    " lsp for elixir
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+    " lsp for clojure
+    "Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
     Plug 'Yggdroot/indentLine'
     Plug 'Chiel92/vim-autoformat'
@@ -46,15 +51,19 @@ set nocompatible
     Plug 'mhinz/vim-mix-format'
     Plug 'mxw/vim-jsx'
     Plug 'pangloss/vim-javascript'
-    Plug 'plasticboy/vim-markdown'
     Plug 'wavded/vim-stylus'
     Plug 'b4b4r07/vim-sqlfmt'
+
+    " markdown preview, without npm support
+    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
     call plug#end()
     filetype plugin indent on
 " /Plugs }
 
 """ { Configuration
+
+    set updatetime=300
 
     " don't beep, do visual bell
     set visualbell
@@ -77,6 +86,7 @@ set nocompatible
     syntax enable
     colorscheme NeoSolarized
     set background=dark
+    "set background=light
     let g:neosolarized_contrast = "high"
 
     " limit syntax highlighting otherwise the world stops
@@ -163,10 +173,13 @@ set nocompatible
     " enable symbol-searching via rg through fzf window (with reasonable defaults/ignores)
     function! RipgrepFzfSymbol(query, fullscreen)
       let thing = "rg --column --line-number --no-heading --color=always --smart-case"
-          \ . " -g '*.{clj,cljc,cljs,edn,js,json,md,styl,html,config,conf,scss,yml,env}'"
+          \ . " -g '*.{ex,exs,eex,clj,cljc,cljs,edn,js,json,md,styl,html,config,conf,scss,yml,env}'"
           \ . " -g '{resources/migrations}/*'"
-          \ . " -g '!*.{min.js,js.map,cache.json,externs.js,swp,o,zip}'"
-          \ . " -g '!{.git,node_modules,vendor}/*'"
+          \ . " -g '!*.{min.js,js.map,cache.json,externs.js,swp,o,zip,beam}'"
+          \ . " -g '!*.{beam}'"
+          \ . " -g '!*/{ebin,_build,build}/*'"
+          \ . " -g '!*/{deps}/*'"
+          \ . " -g '!{.git,node_modules,vendor,_build,build,deps,tmp,test,helm,deps}/*'"
           \ . " "
           \ . shellescape(a:query)
       call fzf#vim#grep(thing, 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4.. --bind ctrl-j:up,ctrl-k:down'}), a:fullscreen)
@@ -179,15 +192,6 @@ set nocompatible
     command! -nargs=* -bang -complete=dir Files
           \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--delimiter', ':', '--bind', 'ctrl-j:up,ctrl-k:down', '--info', 'inline', '--height', '40%']}), <bang>0)
 
-    " make UltiSnips pick up custom snippets (which must be symlinked to .vim/*)
-    let g:UltiSnipsSnippetDirectories=[$HOME, "UltiSnips", "my_ulti_snips"]
-
-    " better key bindings for UltiSnipsExpandTrigger
-    let g:UltiSnipsExpandTrigger = "<tab>"
-    let g:UltiSnipsJumpForwardTrigger = "<tab>"
-    let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-    let g:UltiSnipsUsePythonVersion = 2
-
     " status bar customization
     let g:airline#extensions#tabline#fnamemod = ':.'
     let g:airline#extensions#tabline#fnamecollapse = 0
@@ -198,21 +202,8 @@ set nocompatible
     " disable auto-insert / auto-delete mode for clojure expressions
     let g:sexp_enable_insert_mode_mappings = 0
 
-    " disable folding markdown and all keybinds
-    let g:vim_markdown_folding_disabled = 1
-    let g:vim_markdown_no_default_key_mappings = 1
-    " don't automatically insert indent on list newline
-    let g:vim_markdown_new_list_item_indent = 0
-    " dont automatically insert bullets
-     let g:vim_markdown_auto_insert_bullets = 0
-    " disable syntax hiding
-    let g:vim_markdown_conceal = 0
-
     " markdown preview to ctrl-m
-    let vim_markdown_preview_hotkey='<C-m>'
-    " use gh flavored markdown via grip
-    let vim_markdown_preview_github=1
-    let vim_markdown_preview_browser='Google Chrome'
+    nmap <C-m> <Plug>MarkdownPreview
 
     " display yankring w/ leader-p (copy/paste history)
     nnoremap <leader>p :YRShow<CR>
@@ -223,20 +214,6 @@ set nocompatible
     " dont auto-insert for strings (super annoying) by overriding defaults
     call lexima#add_rule({'char': '"', 'input_after': ''})
     call lexima#add_rule({'char': "'", 'input_after': ''})
-
-    " CoC code navigation
-    nmap <silent> gd <Plug>(coc-definition)
-    nmap <silent> gr <Plug>(coc-references)
-    nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-    " CoC show-doc
-    function! s:show_documentation()
-      if (index(['vim','help'], &filetype) >= 0)
-        execute 'h '.expand('<cword>')
-      else
-        call CocAction('doHover')
-      endif
-    endfunction
 
 " /Configuration }
 
@@ -330,37 +307,63 @@ set nocompatible
     " } /Functions
 
 """ { Custom workflow commands
-    " reloaded workflow reset, refresh
-    nnoremap <leader>rs :Eval (user/reset)<CR>
-    nnoremap <leader>rf :Eval (clojure.tools.namespace.repl/refresh)<CR>
-    nnoremap <leader>ra :Eval (clojure.tools.namespace.repl/refresh-all)<CR>
 
+    " optional, configure as-you-type completions
+    set completeopt=menu,menuone,preview,noselect,noinsert
+
+    """ coc/LSP stuff
+    nmap <silent> gd <Plug>(coc-definition)
+    nmap <silent> gr <Plug>(coc-references)
+    nmap <silent> gi <Plug>(coc-implementation)
+    nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+    " coc auto-format
+    vmap <leader>f <Plug>(coc-format-selected)
+    nmap <leader>f <Plug>(coc-format-selected)
+
+    " coc symbol renaming
+    nmap <leader>rn <Plug>(coc-rename)
+
+    " coc show-doc
+    function! s:show_documentation()
+     if (index(['vim','help'], &filetype) >= 0)
+       execute 'h '.expand('<cword>')
+     else
+       if CocAction('hasProvider', 'hover')
+         call CocActionAsync('doHover')
+       else
+         call feedkeys('K', 'in')
+       endif
+     endif
+    endfunction
+
+    "" clojure coc/LSP stuff
     " auto-import missing clojure libs
-    nnoremap <silent> cram :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
-    " clean clojure namespaces (sort them)
-    nnoremap <silent> crcn :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
-    " move form into let
-    nnoremap <silent> crml :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'move-to-let', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Binding name: ')]})<CR>
-    " extract form into function
-    nnoremap <silent> cref :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Function name: ')]})<CR>
-    " rename symbol under cursor
-    nmap <silent> crrn <Plug>(coc-rename)
-    " auto threaders / unwinders
-    nnoremap <silent> crtf :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
-    nnoremap <silent> crtl :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
-    nnoremap <silent> crtfa :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
-    nnoremap <silent> crtla :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
-    nnoremap <silent> cruw :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-thread', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
-    nnoremap <silent> crua :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    "nnoremap <silent> cram :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    "" clean clojure namespaces (sort them)
+    "nnoremap <silent> crcn :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    "" move form into let
+    "nnoremap <silent> crml :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'move-to-let', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Binding name: ')]})<CR>
+    "" extract form into function
+    "nnoremap <silent> cref :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Function name: ')]})<CR>
+    "" rename symbol under cursor
+    "nmap <silent> crrn <Plug>(coc-rename)
+    "" auto threaders / unwinders
+    "nnoremap <silent> crtf :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    "nnoremap <silent> crtl :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    "nnoremap <silent> crtfa :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    "nnoremap <silent> crtla :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    "nnoremap <silent> cruw :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-thread', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    "nnoremap <silent> crua :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+
+    " reloaded workflow reset, refresh
+    "nnoremap <leader>rs :Eval (user/reset)<CR>
+    "nnoremap <leader>rf :Eval (clojure.tools.namespace.repl/refresh)<CR>
+    "nnoremap <leader>ra :Eval (clojure.tools.namespace.repl/refresh-all)<CR>
 
     " search across file contenis with rip-grep, using fzfs syntax and window
     nnoremap <silent> <C-s> :Rgs<CR>
     nnoremap <silent> <C-p> :Files<CR>
-
-    " auto-format
-    vmap <leader>f <Plug>(coc-format-selected)
-    nmap <leader>f <Plug>(coc-format-selected)
-    nmap <leader>rn <Plug>(coc-rename)
 
     " highlight words without jumping the cursor randomly
     nnoremap * *``

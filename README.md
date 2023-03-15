@@ -1,4 +1,24 @@
-# Problems + Solutions
+# New dev environment setup
+
+- install iterm2
+- install nvim (`alias vim="nvim"` in .zshrc, then setup initialization https://neovim.io/doc/user/nvim.html#nvim-from-vim)
+- install ohmyzsh, pick a theme
+- download solarized color themes
+- install powerline/nerd font and zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
+- configure color theme, font, and ascii font in iterm2
+- configure split navigation keybinds to match vim (ctrl-h/j/k/l)
+- install brew
+- install fzf
+- probably generate an ssh key and add it to some githubs (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+
+## Reasonable git aliases
+
+```
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.st status
+```
 
 ## Clone and symlink
 
@@ -7,11 +27,12 @@ Clone this repo to ~/.vim and link the .vimrc file to the expected vim location
 ```
 cd ~/.vim
 git clone git@github.com:lwhorton/vim.git
-ln -s ~/.vim/vim/.vimrc ~/.vimrc
+ln -s ~/.vim/.vimrc ~/.vimrc
 
 ## Installing plugins
-[ Plug ](https://github.com/junegunn/vim-plug) must be installed before we can
-install the rest of the suite. Make a ~/.vim/bundle.
+- [ Plug ](https://github.com/junegunn/vim-plug) must be installed before we can
+install the rest of the suite
+- from inside ~/.vimrc, run `:PlugInstall`
 ```
 
 ## Ack actually needs to exist on your system for greps to work
@@ -20,24 +41,15 @@ install the rest of the suite. Make a ~/.vim/bundle.
 brew install ack
 ```
 
-## UltiSnips filetype recognition doesn't work
+## snippets (using vim-vsnip for now, which requires no python/jvm/node nonsense)
 
-Packagers vundle/plug don't complete the installation process. UltiSnips needs a
-few more source files, but Vim only allows this directly in the home directory,
-so make a sym link:
+we have to symlink the persisted snips (in snips/*) to the vsnip dir
 
-```bash
-mkdir -p ~/.vim/after/plugin
-ln -s ~/.vim/bundle/ultisnip/after/plugin/* ~/.vim/after/plugin
-mkdir ~/.vim/ftdetect
-ln -s ~/.vim/bundle/ultisnip/ftdetect/* ~/.vim/ftdetect
-```
-
-Also given my custom snippets, symlink them into the path described in the
-.vimrc ("my_ulti_snips"):
+`echo g:vsnip_snippet_dir (~/.vsnip by default)`
 
 ```bash
-ln -s ~/.vim/my_custom_snips ~/my_ulti_snips
+mkdir -p ~/.vim/.vsnip
+ln -s ~/.vim/.vsnip ~/.vim/snips/*
 ```
 
 For typescript/javascript, just `ln -s /path/to/javascript.snippets
@@ -48,10 +60,25 @@ For typescript/javascript, just `ln -s /path/to/javascript.snippets
 mkdir ~/.vim/undo
 ```
 
-## Install dependencies for markdown editing
-`brew install grip`
+## pick an lsp
 
-## Install LSP for Clojure programming
+### elixir
+
+```
+plug 'dense-analysis/ale'
+...
+git clone git@github.com:elixir-lsp/elixir-ls.git
+cd elixir-ls && mkdir rel
+
+checkout the latest release
+git checkout tags/v0.4.0
+
+$ mix deps.get && mix compile
+
+$ mix elixir_ls.release -o rel
+```
+
+### clojure
 
 - install clojure-lsp binary https://github.com/snoe/clojure-lsp
 - install coc https://github.com/neoclide/coc.nvim for intellisense
