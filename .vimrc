@@ -17,8 +17,12 @@ set nocompatible
     Plug 'vim-scripts/dbext.vim'
     Plug 'cohama/lexima.vim'
     Plug 'vim-scripts/YankRing.vim'
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
+
+    " file/grep/buffer searching
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.1' }
+    " " optional deps
+    Plug 'fannheyward/telescope-coc.nvim'
 
     Plug 'iCyMind/NeoSolarized'
     Plug 'kien/rainbow_parentheses.vim'
@@ -35,11 +39,8 @@ set nocompatible
     Plug 'tpope/vim-salve'
     Plug 'yssl/QFEnter'
 
-    " lsp for elixir
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-    " lsp for clojure
-    "Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    " lsp
+    Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 
     Plug 'Yggdroot/indentLine'
     Plug 'Chiel92/vim-autoformat'
@@ -167,31 +168,6 @@ set nocompatible
     let g:clojure_fuzzy_indent_patterns = ['^doto', '^with', '^def', '^let', 'go-loop', 'match', '^context', '^GET', '^PUT', '^POST', '^PATCH', '^DELETE', '^ANY', 'this-as', '^are', '^dofor', 'attempt-all', 'when-failed']
     let g:clojure_align_multiline_strings = 1
 
-    " fzf: pin preview to bottom
-    let g:fzf_layout = {'down': '80%'}
-
-    " enable symbol-searching via rg through fzf window (with reasonable defaults/ignores)
-    function! RipgrepFzfSymbol(query, fullscreen)
-      let thing = "rg --column --line-number --no-heading --color=always --smart-case"
-          \ . " -g '*.{ex,exs,eex,clj,cljc,cljs,edn,js,json,md,styl,html,config,conf,scss,yml,env}'"
-          \ . " -g '{resources/migrations}/*'"
-          \ . " -g '!*.{min.js,js.map,cache.json,externs.js,swp,o,zip,beam}'"
-          \ . " -g '!*.{beam}'"
-          \ . " -g '!*/{ebin,_build,build}/*'"
-          \ . " -g '!*/{deps}/*'"
-          \ . " -g '!{.git,node_modules,vendor,_build,build,deps,tmp,test,helm,deps}/*'"
-          \ . " "
-          \ . shellescape(a:query)
-      call fzf#vim#grep(thing, 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4.. --bind ctrl-j:up,ctrl-k:down'}), a:fullscreen)
-    endfunction
-
-    " invoke symbol searching fzf
-    command! -nargs=* -bang Rgs call RipgrepFzfSymbol(<q-args>, <bang>0)
-
-    " file searching fzf
-    command! -nargs=* -bang -complete=dir Files
-          \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--delimiter', ':', '--bind', 'ctrl-j:up,ctrl-k:down', '--info', 'inline', '--height', '40%']}), <bang>0)
-
     " status bar customization
     let g:airline#extensions#tabline#fnamemod = ':.'
     let g:airline#extensions#tabline#fnamecollapse = 0
@@ -313,7 +289,10 @@ set nocompatible
 
     """ coc/LSP stuff
     nmap <silent> gd <Plug>(coc-definition)
-    nmap <silent> gr <Plug>(coc-references)
+    "nmap <silent> gr <Plug>(coc-references)
+    "use telescope instead of coc-references
+    nmap <silent> gr <cmd>Telescope coc references_used<cr>
+
     nmap <silent> gi <Plug>(coc-implementation)
     nnoremap <silent> K :call <SID>show_documentation()<CR>
 
@@ -362,8 +341,14 @@ set nocompatible
     "nnoremap <leader>ra :Eval (clojure.tools.namespace.repl/refresh-all)<CR>
 
     " search across file contenis with rip-grep, using fzfs syntax and window
-    nnoremap <silent> <C-s> :Rgs<CR>
-    nnoremap <silent> <C-p> :Files<CR>
+    nnoremap <silent> <C-s> <cmd>Telescope live_grep<cr>
+    nnoremap <silent> <C-p> <cmd>Telescope find_files<cr>
+    nnoremap <silent> <C-b> :Files<CR>
+    " Find files using Telescope command-line sugar.
+    nnoremap <leader>ff <cmd>Telescope find_files<cr>
+    nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+    nnoremap <leader>fb <cmd>Telescope buffers<cr>
+    nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
     " highlight words without jumping the cursor randomly
     nnoremap * *``

@@ -82,4 +82,5 @@ $ mix elixir_ls.release -o rel
 
 - install clojure-lsp binary https://github.com/snoe/clojure-lsp
 - install coc https://github.com/neoclide/coc.nvim for intellisense
+- install coc-{language} `CoCInstall coc-clojure coc-elixir`
 - sym-link coc-settings.json to ~/.config/nvim/coc-settings.json
