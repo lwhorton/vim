@@ -316,6 +316,13 @@ set nocompatible
      endif
     endfunction
 
+    " coc autocomplete '{key} = accept auto complete suggestion'
+    inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#_select_confirm() : "\<TAB>"
+
+    " coc autocomplete next/prev as normal up/down but with ctrl
+    inoremap <silent><expr> <C-j> coc#pum#visible() ? coc#pum#next(1) : "\<C-j>"
+    inoremap <silent><expr> <C-k> coc#pum#visible() ? coc#pum#prev(1) : "\<C-k>"
+
     "" clojure coc/LSP stuff
     " auto-import missing clojure libs
     "nnoremap <silent> cram :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
