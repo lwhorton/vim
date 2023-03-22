@@ -113,6 +113,11 @@ set nocompatible
     set tabstop=2
     set shiftwidth=2
     set expandtab
+    " make tab/shift-tab(undo tab) work
+      " for command mode
+    nnoremap <S-Tab> <<
+      " for insert mode
+    inoremap <S-Tab> <C-d>
 
     "" smart case sensitivity while searching
     set ignorecase
