@@ -17,6 +17,7 @@ set nocompatible
     Plug 'vim-scripts/dbext.vim'
     Plug 'cohama/lexima.vim'
     Plug 'vim-scripts/YankRing.vim'
+    Plug 'overcache/NeoSolarized'
 
     " file/grep/buffer searching
     Plug 'nvim-lua/plenary.nvim'

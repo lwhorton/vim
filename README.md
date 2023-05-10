@@ -2,13 +2,14 @@
 
 - install iterm2
 - install nvim (`alias vim="nvim"` in .zshrc, then setup initialization https://neovim.io/doc/user/nvim.html#nvim-from-vim)
-- install ohmyzsh, pick a theme
-- download solarized color themes
+- install ohmyzsh, and [zsh-dircolors](https://github.com/joel-porquet/zsh-dircolors-solarized)
+- download [solarized color themes](https://github.com/overcache/NeoSolarized)
 - install powerline/nerd font and zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
+- install profile in iterm ./iterm2-profile.json
+- install navigation binds in iterm ./iterm2-keybinds
 - configure color theme, font, and ascii font in iterm2
-- configure split navigation keybinds to match vim (ctrl-h/j/k/l)
 - install brew
-- install fzf
+- install fzf, rg
 - probably generate an ssh key and add it to some githubs (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 
 ## Reasonable git aliases
