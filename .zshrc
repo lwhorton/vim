@@ -44,22 +44,26 @@ alias insecure-chrome='open -a Google\ Chrome --args --disable-web-security'
 
 alias vim="nvim"
 
-# autocompletions for brew
-if [ -n "$(which brew)" ] && [ -f `brew --prefix`/etc/bash_completion ]; then
-    . `brew --prefix`/etc/bash_completion
-fi
-
-# autocompletions for git
-source ~/git-completion.bash
-
 # aws cli
 export PATH="$HOME/aws-cli:$PATH"
 
 # clojure awesomeness
 export PATH="$HOME/clojure-lsp:$PATH"
 
-. $HOME/.asdf/asdf.sh
+# elixir non-awesomeness
+# https://github.com/asdf-vm/asdf-erlang/issues/207#issuecomment-883216342
+export KERL_CONFIGURE_OPTIONS="--with-ssl=`brew --prefix openssl` \
+                               --with-wx-config=`brew --prefix wxwidgets`/bin/wx-config \
+                               --without-javac"
 
-. $HOME/.asdf/completions/asdf.bash
+# asdf
+. "$HOME/.asdf/asdf.sh"
+#. "$HOME/.asdf/completions/asdf.bash"
+#
+# set java home based on asdf
+. ~/.asdf/plugins/java/set-java-home.zsh
 
-source $ZSH/oh-my-zsh.sh
+
+# source extra zsh completions
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+source "$ZSH/oh-my-zsh.sh"

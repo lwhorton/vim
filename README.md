@@ -1,15 +1,16 @@
 # New dev environment setup
 
-- install iterm2
-- install nvim (`alias vim="nvim"` in .zshrc, then setup initialization https://neovim.io/doc/user/nvim.html#nvim-from-vim)
-- install ohmyzsh, and [zsh-dircolors](https://github.com/joel-porquet/zsh-dircolors-solarized)
-- download [solarized color themes](https://github.com/overcache/NeoSolarized)
-- install powerline/nerd font and zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
-- install profile in iterm ./iterm2-profile.json
-- install navigation binds in iterm ./iterm2-keybinds
-- configure color theme, font, and ascii font in iterm2
 - install brew
-- install fzf, rg
+- install kitty
+- install profile for kitty.conf `ln -s ~/.vim/vim/kitty.conf ~/.config/kitty/`
+- install profile for .zshrc `ln -s ~/.vim/vim/.zshrc ~/.zshrc`
+- install nvim, then setup initialization properly https://neovim.io/doc/user/nvim.html#nvim-from-vim
+- install ohmyzsh, and [zsh-dircolors](https://github.com/joel-porquet/zsh-dircolors-solarized)
+- install fzf, rg, ack
+- install powerline/nerd font and zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
+- download [solarized color themes](https://github.com/overcache/NeoSolarized)
+- install addon dependencies, like ack (see below), [vim-fugitive](https://github.com/tpope/vim-fugitive#installation)
+- run `:PlugInstall` after sourcing (`:source %`) the vimrc file
 - probably generate an ssh key and add it to some githubs (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 
 ## Reasonable git aliases
@@ -28,18 +29,12 @@ Clone this repo to ~/.vim and link the .vimrc file to the expected vim location
 ```
 cd ~/.vim
 git clone git@github.com:lwhorton/vim.git
-ln -s ~/.vim/.vimrc ~/.vimrc
+ln -s ~/.vim/vim/.vimrc ~/.vimrc
 
 ## Installing plugins
 - [ Plug ](https://github.com/junegunn/vim-plug) must be installed before we can
 install the rest of the suite
 - from inside ~/.vimrc, run `:PlugInstall`
-```
-
-## Ack actually needs to exist on your system for greps to work
-
-```
-brew install ack
 ```
 
 ## snippets (using vim-vsnip for now, which requires no python/jvm/node nonsense)

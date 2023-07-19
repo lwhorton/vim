@@ -7,6 +7,7 @@ set nocompatible
 
 """ { Plugs
 
+    "Plug 'github/copilot.vim'
     Plug 'google/vim-searchindex'
     Plug 'scrooloose/nerdcommenter'
     Plug 'tpope/vim-vinegar'
@@ -15,7 +16,6 @@ set nocompatible
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-rhubarb'
     Plug 'vim-scripts/dbext.vim'
-    Plug 'cohama/lexima.vim'
     Plug 'vim-scripts/YankRing.vim'
     Plug 'overcache/NeoSolarized'
 
@@ -26,9 +26,10 @@ set nocompatible
     Plug 'fannheyward/telescope-coc.nvim'
 
     Plug 'iCyMind/NeoSolarized'
-    Plug 'kien/rainbow_parentheses.vim'
+    "Plug 'kien/rainbow_parentheses.vim'
     Plug 'hrsh7th/vim-vsnip'
     Plug 'hrsh7th/vim-vsnip-integ'
+    Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
 
     Plug 'christoomey/vim-tmux-navigator'
     Plug 'editorconfig/editorconfig-vim'
@@ -43,11 +44,11 @@ set nocompatible
     " lsp
     Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 
-    Plug 'Yggdroot/indentLine'
+    "Plug 'Yggdroot/indentLine'
     Plug 'Chiel92/vim-autoformat'
     Plug 'elixir-editors/vim-elixir'
     Plug 'guns/vim-clojure-static'
-    Plug 'udalov/kotlin-vim'
+    "Plug 'udalov/kotlin-vim'
     Plug 'jparise/vim-graphql'
     Plug 'leafgarland/typescript-vim'
     Plug 'mhinz/vim-mix-format'
@@ -71,6 +72,7 @@ set nocompatible
     set visualbell
 
     " no swap files
+    "set directory=~/.vim/swap
     set noswapfile
 
     "" no wrapping/auto-inserting of \n
@@ -87,7 +89,7 @@ set nocompatible
     set termguicolors
     syntax enable
     colorscheme NeoSolarized
-    set background=dark
+    set background=light
     "set background=light
     let g:neosolarized_contrast = "high"
 
@@ -194,8 +196,8 @@ set nocompatible
     let g:yankring_replace_n_nkey = ''
 
     " dont auto-insert for strings (super annoying) by overriding defaults
-    call lexima#add_rule({'char': '"', 'input_after': ''})
-    call lexima#add_rule({'char': "'", 'input_after': ''})
+    "call lexima#add_rule({'char': '"', 'input_after': ''})
+    "call lexima#add_rule({'char': "'", 'input_after': ''})
 
 " /Configuration }
 
@@ -331,21 +333,21 @@ set nocompatible
 
     "" clojure coc/LSP stuff
     " auto-import missing clojure libs
-    "nnoremap <silent> cram :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> cram :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
     "" clean clojure namespaces (sort them)
-    "nnoremap <silent> crcn :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> crcn :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
     "" move form into let
-    "nnoremap <silent> crml :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'move-to-let', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Binding name: ')]})<CR>
+    nnoremap <silent> crml :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'move-to-let', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Binding name: ')]})<CR>
     "" extract form into function
     "nnoremap <silent> cref :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Function name: ')]})<CR>
     "" rename symbol under cursor
     "nmap <silent> crrn <Plug>(coc-rename)
     "" auto threaders / unwinders
-    "nnoremap <silent> crtf :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
-    "nnoremap <silent> crtl :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> crtf :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> crtl :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
     "nnoremap <silent> crtfa :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
     "nnoremap <silent> crtla :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
-    "nnoremap <silent> cruw :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-thread', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
+    nnoremap <silent> cruw :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-thread', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
     "nnoremap <silent> crua :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-all', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
 
     " reloaded workflow reset, refresh
