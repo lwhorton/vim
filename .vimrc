@@ -7,58 +7,91 @@ set nocompatible
 
 """ { Plugs
 
-    "Plug 'github/copilot.vim'
-    Plug 'google/vim-searchindex'
-    Plug 'scrooloose/nerdcommenter'
-    Plug 'tpope/vim-vinegar'
+    " navigate kitty windows using vim motion
+    Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
+
+    " repl!
+    Plug 'tpope/vim-fireplace'
+    "" auto connect to repl, auto-start with :Console, etc.
+    Plug 'tpope/vim-salve'
+
+    " file status bar
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
+
+    " search results
+    Plug 'google/vim-searchindex'
+
+    " git integration
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-rhubarb'
-    Plug 'vim-scripts/dbext.vim'
+
+    " press - to get a project drawer / tree
+    Plug 'tpope/vim-vinegar'
+
+    " yank history
     Plug 'vim-scripts/YankRing.vim'
+
+    " toggling commenting of lines
+    Plug 'scrooloose/nerdcommenter'
+
+    " db integration
+    Plug 'vim-scripts/dbext.vim'
+
+    " color schemes
     Plug 'overcache/NeoSolarized'
 
     " file/grep/buffer searching
     Plug 'nvim-lua/plenary.nvim'
     Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.1' }
-    " " optional deps
+    "" optional deps for ^
     Plug 'fannheyward/telescope-coc.nvim'
 
-    Plug 'iCyMind/NeoSolarized'
-    "Plug 'kien/rainbow_parentheses.vim'
+    " snippets
     Plug 'hrsh7th/vim-vsnip'
     Plug 'hrsh7th/vim-vsnip-integ'
-    Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
 
-    Plug 'christoomey/vim-tmux-navigator'
+    " auto insert matching \{ \[ \( etc.
+    Plug 'cohama/lexima.vim'
+
+    " editorconfig.org for vim
     Plug 'editorconfig/editorconfig-vim'
+
+    " s-expression for lisps w/ better mappings
     Plug 'guns/vim-sexp'
     Plug 'tpope/vim-sexp-mappings-for-regular-people'
+
+    " plugins can tap into "." repeat functionality
     Plug 'tpope/vim-repeat'
+
+    " add/remove surrounding \( \" \:
     Plug 'tpope/vim-surround'
-    Plug 'tpope/vim-fireplace'
-    Plug 'tpope/vim-salve'
+
+    " select how/where to open windows from quickfix menu
     Plug 'yssl/QFEnter'
 
-    " lsp
+    " lsp-based autocompletion
     Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
+    Plug 'elixir-lsp/coc-elixir', {'do': 'yarn install && yarn prepack'}
+
+    " markdown preview, without npm support
+    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
     "Plug 'Yggdroot/indentLine'
+
+    " language autoformatters
     Plug 'Chiel92/vim-autoformat'
     Plug 'elixir-editors/vim-elixir'
+    "" mix integration for elixir
+    Plug 'mhinz/vim-mix-format'
     Plug 'guns/vim-clojure-static'
-    "Plug 'udalov/kotlin-vim'
     Plug 'jparise/vim-graphql'
     Plug 'leafgarland/typescript-vim'
-    Plug 'mhinz/vim-mix-format'
     Plug 'mxw/vim-jsx'
     Plug 'pangloss/vim-javascript'
     Plug 'wavded/vim-stylus'
     Plug 'b4b4r07/vim-sqlfmt'
-
-    " markdown preview, without npm support
-    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+    "Plug 'udalov/kotlin-vim'
 
     call plug#end()
     filetype plugin indent on
@@ -66,7 +99,11 @@ set nocompatible
 
 """ { Configuration
 
-    set updatetime=300
+    set updatetime=750
+
+    " dont leave splits off in buffer land to be lost to the ages
+    set autowriteall
+    set confirm
 
     " don't beep, do visual bell
     set visualbell
@@ -85,13 +122,21 @@ set nocompatible
     "" enable html/css highlighting in js files
     let g:javascript_enable_domhtmlcss=1
 
-    "" enable vim colors (solarized dark, high contrast)
+    " enable vim solarized colors
     set termguicolors
     syntax enable
     colorscheme NeoSolarized
     set background=light
-    "set background=light
+    "set background=dark
     let g:neosolarized_contrast = "high"
+    "" the default matching cursor color is bad, so fix it
+
+    " vim hardcodes background color erase even if the terminfo file does
+    " not contain bce (not to mention that libvte based terminals
+    " incorrectly contain bce in their terminfo files). this causes
+    " incorrect background rendering when using a color theme with a
+    " background color.
+    let &t_ut=''
 
     " limit syntax highlighting otherwise the world stops
     set synmaxcol=256
@@ -135,35 +180,18 @@ set nocompatible
     set undofile
 
     "" hybrid line numbers
-    "set rnu " vim cannot handle relative line numbers on files > 100 lines, too slow
+    "set rnu " ? vim cannot handle relative line numbers on files > 100 lines, too slow
     set nu
 
     "" turn off all character hiding (like hiding of ": in json/markdown files)
     set conceallevel=0
 
+    "" https://stackoverflow.com/questions/10746750/set-vim-bracket-highlighting-colors
+    hi MatchParen gui=bold guifg=Black guibg=none
+      " cterm=bold ctermbg=none ctermfg=magenta
+
     " change git-gutter's gutter background color
     highlight clear SignColumn
-
-    " solarized rainbow parens colors
-    "let g:rbpt_colorpairs = [
-      "\ [ '13', '#6c71c4'],
-      "\ [ '5',  '#d33682'],
-      "\ [ '1',  '#dc322f'],
-      "\ [ '9',  '#cb4b16'],
-      "\ [ '3',  '#b58900'],
-      "\ [ '2',  '#859900'],
-      "\ [ '6',  '#2aa198'],
-      "\ [ '4',  '#268bd2'],
-      "\ ]
-
-    """ enable rainbow parentheses for all buffers
-    "augroup rainbow_parentheses
-      "au!
-      "au VimEnter * RainbowParenthesesActivate
-      "au BufEnter * RainbowParenthesesLoadRound
-      "au BufEnter * RainbowParenthesesLoadSquare
-      "au BufEnter * RainbowParenthesesLoadBraces
-    "augroup END
 
     " parse build.boot files as clj
     autocmd BufNewFile,BufRead *.boot setf clojure
@@ -195,9 +223,17 @@ set nocompatible
     let g:yankring_replace_n_pkey = ''
     let g:yankring_replace_n_nkey = ''
 
-    " dont auto-insert for strings (super annoying) by overriding defaults
-    "call lexima#add_rule({'char': '"', 'input_after': ''})
-    "call lexima#add_rule({'char': "'", 'input_after': ''})
+    " dont auto-insert for stringy things (super annoying)
+    call lexima#add_rule({'char': '"', 'input_after': ''})
+    call lexima#add_rule({'char': '""', 'input_after': ''})
+    call lexima#add_rule({'char': "'", 'input_after': ''})
+    call lexima#add_rule({'char': "''", 'input_after': ''})
+    call lexima#add_rule({'char': "``", 'input_after': ''})
+    "" dont auto-delete on backspace (really fucks with sexp/lisp) ?TODO?
+    "call lexima#add_rule({'char': '<BS>', 'at': '\(#\)'})
+
+    "" dont do newline bullshit
+    g:lexima_enable_newline_rules = 0
 
 " /Configuration }
 
@@ -295,6 +331,8 @@ set nocompatible
     " optional, configure as-you-type completions
     set completeopt=menu,menuone,preview,noselect,noinsert
 
+    " configure for telescope is done via vim/after/plugin/telescope.nvim.vim
+
     """ coc/LSP stuff
     nmap <silent> gd <Plug>(coc-definition)
     "nmap <silent> gr <Plug>(coc-references)
@@ -307,9 +345,6 @@ set nocompatible
     " coc auto-format
     vmap <leader>f <Plug>(coc-format-selected)
     nmap <leader>f <Plug>(coc-format-selected)
-
-    " coc symbol renaming
-    nmap <leader>rn <Plug>(coc-rename)
 
     " coc show-doc
     function! s:show_documentation()
@@ -341,7 +376,7 @@ set nocompatible
     "" extract form into function
     "nnoremap <silent> cref :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1, input('Function name: ')]})<CR>
     "" rename symbol under cursor
-    "nmap <silent> crrn <Plug>(coc-rename)
+    nnoremap <silent> crrn <Plug>(coc-rename)
     "" auto threaders / unwinders
     nnoremap <silent> crtf :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
     nnoremap <silent> crtl :call CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': [Expand('%:p'), line('.') - 1, col('.') - 1]})<CR>
@@ -355,13 +390,10 @@ set nocompatible
     "nnoremap <leader>rf :Eval (clojure.tools.namespace.repl/refresh)<CR>
     "nnoremap <leader>ra :Eval (clojure.tools.namespace.repl/refresh-all)<CR>
 
-    " search across file contenis with rip-grep, using fzfs syntax and window
+    " search across file contents with rip-grep, using fzfs syntax and window
     nnoremap <silent> <C-s> <cmd>Telescope live_grep<cr>
     nnoremap <silent> <C-p> <cmd>Telescope find_files<cr>
-    nnoremap <silent> <C-b> :Files<CR>
     " Find files using Telescope command-line sugar.
-    nnoremap <leader>ff <cmd>Telescope find_files<cr>
-    nnoremap <leader>fg <cmd>Telescope live_grep<cr>
     nnoremap <leader>fb <cmd>Telescope buffers<cr>
     nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 

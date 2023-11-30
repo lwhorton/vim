@@ -60,6 +60,12 @@ mkdir ~/.vim/undo
 
 ### elixir
 
+- install elixir-lsp binary (typically ~/.elixir/), and probably rebuild build elixir-ls with the
+  version you are using in the application (use asdf and .tool-versions):
+  https://github.com/elixir-lsp/coc-elixir#server-fails-to-start
+- install coc-{language} `CoCInstall coc-elixir`
+- leverage `asdf local elixir/erlang {version}` and rebuild elixir-ls
+
 ```
 plug 'dense-analysis/ale'
 ...
@@ -76,7 +82,8 @@ $ mix elixir_ls.release -o rel
 
 ### clojure
 
-- install clojure-lsp binary https://github.com/snoe/clojure-lsp
-- install coc https://github.com/neoclide/coc.nvim for intellisense
-- install coc-{language} `CoCInstall coc-clojure coc-elixir`
+- install clojure-lsp binary https://github.com/snoe/clojure-lsp (typically to
+  /usr/local/bin)
+- install coc (automcompletion) https://github.com/neoclide/coc.nvim for intellisense
+- install coc-{language} `CoCInstall coc-clojure`
 - sym-link coc-settings.json to ~/.config/nvim/coc-settings.json

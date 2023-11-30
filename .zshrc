@@ -42,6 +42,8 @@ eval "$(jenv init -)"
 # open chrome insecurely
 alias insecure-chrome='open -a Google\ Chrome --args --disable-web-security'
 
+alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+
 alias vim="nvim"
 
 # aws cli
