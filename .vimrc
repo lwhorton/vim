@@ -232,9 +232,6 @@ set nocompatible
     "" dont auto-delete on backspace (really fucks with sexp/lisp) ?TODO?
     "call lexima#add_rule({'char': '<BS>', 'at': '\(#\)'})
 
-    "" dont do newline bullshit
-    g:lexima_enable_newline_rules = 0
-
 " /Configuration }
 
 """ { Keybindings
