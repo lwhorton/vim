@@ -19,6 +19,10 @@
 - install zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
 - run `:PlugInstall` after sourcing (`:source %`) the vimrc file
 - generate an ssh key and add it to github (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- install coc-settings `ln -s ~/.vim/vim/coc-settings.json
+  ~/.config/nvim/coc-settings.json` (:CocConfig to find the settings file
+  location)
+- install coc-{language} in vim `:CoCInstall coc-elixir coc-clojure coc-json ... etc`
 
 ## Reasonable git aliases
 
@@ -29,7 +33,7 @@ git config --global alias.ci commit
 git config --global alias.st status
 git config --global user.email lwhorton@users.noreply.github.com
 git config --global user.name "lwhorton"
-git config --global core.editor "nvim"
+git config --global core.editor "vim"
 ```
 
 ## snippets (using vim-vsnip for now, which requires no python/jvm/node nonsense)

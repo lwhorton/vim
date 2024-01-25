@@ -6,13 +6,9 @@
   "diagnostic.showDeprecated": true,
   "languageserver": {
     "clojure-lsp": {
-      // "command": "bash",
-      // "args": ["-c", "cd /Users/case/dev/lsp && clojure -J-Duser.dir=$PWD -Scp $(clj -Spath) -m clojure-lsp.main"],
-      // "args": ["-c", "export LEIN_JVM_OPTS=\"-Duser.dir=$cwd\" && cd /Users/case/dev/lsp/ && lein run"],
-      //"command": "bash",
-      //"args": ["-c", "cd /Users/case/dev/lsp/cli && clj -M:run"],
-      //"command": "clojure-lsp",
-      "command": "/usr/local/bin/clojure-lsp",
+      "command": "/opt/homebrew/bin/clojure-lsp",
+      //"command": "/Users/luke/dev/clojure-lsp",
+      //"args": ["-c", "clojure -Scp $(clj -Spath) -m clojure-lsp.main"],
       "filetypes": ["clojure"],
       "rootPatterns": ["project.clj", "deps.edn"],
       "additionalSchemes": ["jar", "zipfile"],
@@ -23,7 +19,12 @@
       "initializationOptions": {
         "ignore-classpath-directories": true
       }
-    }
+    },
+    "tsserver": {
+      // https://github.com/neoclide/coc-tsserver/tree/9ff880ef3fbf1680daefe4dacfafdce8ffd2817b#configuration-options
+    },
   },
-  "elixir.pathToElixirLS": "~/.elixir-ls/release/language_server.sh"
+  "elixir.pathToElixirLS": "~/.elixir-ls/release/language_server.sh",
+  "eslint.packageManager": "pnpm",
+  "workspace.workspaceFolderCheckCwd": false
 }

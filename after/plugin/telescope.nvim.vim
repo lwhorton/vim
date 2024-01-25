@@ -13,6 +13,9 @@ defaults = {
     ".git/"
     "node_modules/"
     "deps/"
+    "client/js/"
+    "public/js/"
     }
   }
 })
+EOF

@@ -43,7 +43,7 @@ set nocompatible
 
     " file/grep/buffer searching
     Plug 'nvim-lua/plenary.nvim'
-    Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.1' }
+    Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.4' }
     "" optional deps for ^
     Plug 'fannheyward/telescope-coc.nvim'
 
@@ -54,12 +54,19 @@ set nocompatible
     " auto insert matching \{ \[ \( etc.
     Plug 'cohama/lexima.vim'
 
+    " vim motion to match to language constructs like [, {, if/do blocks 
+    Plug 'andymass/vim-matchup'
+
     " editorconfig.org for vim
     Plug 'editorconfig/editorconfig-vim'
 
     " s-expression for lisps w/ better mappings
     Plug 'guns/vim-sexp'
     Plug 'tpope/vim-sexp-mappings-for-regular-people'
+
+    " syntax-aware select / move / swap / peek for non-lisp shitters
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+    Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
     " plugins can tap into "." repeat functionality
     Plug 'tpope/vim-repeat'
@@ -71,8 +78,9 @@ set nocompatible
     Plug 'yssl/QFEnter'
 
     " lsp-based autocompletion
-    Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
-    Plug 'elixir-lsp/coc-elixir', {'do': 'yarn install && yarn prepack'}
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    "Plug 'elixir-lsp/coc-elixir', {'do': 'yarn install && yarn prepack'}
+    Plug 'neoclide/coc-tsserver'
 
     " markdown preview, without npm support
     Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
@@ -122,16 +130,43 @@ set nocompatible
     "" enable html/css highlighting in js files
     let g:javascript_enable_domhtmlcss=1
 
-    " enable vim solarized colors
-    set termguicolors
+    " enable vim solarized color scheme via overcache/NeoSolarized
     syntax enable
+    set termguicolors
     colorscheme NeoSolarized
     set background=light
     "set background=dark
-    let g:neosolarized_contrast = "high"
-    "" the default matching cursor color is bad, so fix it
 
-    " vim hardcodes background color erase even if the terminfo file does
+    let g:neosolarized_contrast = "high"
+
+    "" the default floating window colors and other such highlights for coc are awful
+    func! s:my_colors_setup() abort
+      hi CocFloating ctermbg=DarkBlue
+      hi CocHintFloat ctermbg=Green
+      hi CocHintSign ctermbg=Green
+      hi CocHintHighlight ctermbg=Green
+      hi CocHintVirtualText ctermbg=Green
+      hi CocWarningFloat ctermbg=Yellow
+      hi CocWarningSign ctermbg=Yellow
+      hi CocWarningHighlight ctermbg=Yellow
+      hi CocWarningVirtualText ctermbg=Yellow
+      hi CocErrorFloat ctermfg=DarkRed
+      hi CocErrorSign ctermfg=DarkBlue
+      hi CocErrorHighlight ctermfg=DarkRed
+      hi CocErrorVirtualText ctermfg=DarkRed
+      hi FgCocErrorFloatBgCocFloating ctermfg=Red
+    endfunc
+
+    augroup colorscheme_coc_setup | au!
+      au VimEnter * call s:my_colors_setup()
+    augroup END
+
+    "" the default matching cursor color is bad, so fix it
+    "" https://stackoverflow.com/questions/10746750/set-vim-bracket-highlighting-colors
+    hi MatchParen gui=bold guifg=Black guibg=none
+    " cterm=bold ctermbg=none ctermfg=magenta
+
+    " vim hardcodes background colors even if the terminfo file does
     " not contain bce (not to mention that libvte based terminals
     " incorrectly contain bce in their terminfo files). this causes
     " incorrect background rendering when using a color theme with a
@@ -155,7 +190,8 @@ set nocompatible
         %s/\s\+$//e
         call cursor(l, c)
     endfun
-    autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
+    "TODO: reenable
+    "autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 
     "" setup not-stupid tabs
     set tabstop=2
@@ -186,12 +222,9 @@ set nocompatible
     "" turn off all character hiding (like hiding of ": in json/markdown files)
     set conceallevel=0
 
-    "" https://stackoverflow.com/questions/10746750/set-vim-bracket-highlighting-colors
-    hi MatchParen gui=bold guifg=Black guibg=none
-      " cterm=bold ctermbg=none ctermfg=magenta
-
     " change git-gutter's gutter background color
     highlight clear SignColumn
+    let g:gitgutter_override_sign_column_highlight = 0
 
     " parse build.boot files as clj
     autocmd BufNewFile,BufRead *.boot setf clojure
@@ -200,15 +233,27 @@ set nocompatible
     " remove text width limits on these filetype
     autocmd bufreadpre *.csv setlocal textwidth=0
 
+    " spellcheck readme, git commits
+    autocmd FileType markdown setlocal spell
+    autocmd FileType gitcommit setlocal spell
+
     " clj-static formatting, per aclaimant
     let g:clojure_fuzzy_indent_patterns = ['^doto', '^with', '^def', '^let', 'go-loop', 'match', '^context', '^GET', '^PUT', '^POST', '^PATCH', '^DELETE', '^ANY', 'this-as', '^are', '^dofor', 'attempt-all', 'when-failed']
     let g:clojure_align_multiline_strings = 1
 
-    " status bar customization
-    let g:airline#extensions#tabline#fnamemod = ':.'
+    " airline status bar customization
+    let g:airline_section_a = airline#section#create_left(['mode'])
+    let g:airline_section_b = '%-0.30{getcwd()}'
+    let g:airline_section_c = '%t'
+    let g:airline_section_gutter = ''
+    let g:airline_section_x = ''
+    let g:airline_section_y = ''
+    let g:airline_section_z = airline#section#create_right(['%3p%%', '%l/%L'])
+    let g:airline#extensions#tabline#fnamemod = ':t'
+    let g:airline#extensions#branch#enabled = 0
     let g:airline#extensions#tabline#fnamecollapse = 0
 
-    " render airline when only 1 files is open
+    " still render airline status if only 1 file is open
     set laststatus=2
 
     " disable auto-insert / auto-delete mode for clojure expressions
@@ -273,8 +318,14 @@ set nocompatible
         nnoremap <S-U> <C-r>
 
         " jump to the symbol matching the one under the cursor
-        nnoremap ; %
-        vnoremap ; %
+        nmap ; %
+        vmap ; %
+
+        " remap vim-matchup to match
+        nmap [; [%
+        vmap [; [%
+        nmap ]; ]%
+        vmap ]; ]%
 
         " jump to end of line
         nnoremap ' $
@@ -286,6 +337,10 @@ set nocompatible
 
     " allow saving of files as sudo when I forgot to start using sudo
     cmap w!! w !sudo tee > /dev/null %
+
+    " performance limiters for vim-matchup
+    let g:matchup_delim_stopline = 25000 " for all matches 
+    let g:matchup_matchparen_stopline = 400 " for match highlighting only
 
     " in quickfix window, open file under cursor vertical/horizontal
     let g:qfenter_keymap = {}
@@ -396,5 +451,8 @@ set nocompatible
 
     " highlight words without jumping the cursor randomly
     nnoremap * *``
+
+    " after your search hit return in command mode to clear highlight
+    nnoremap <CR> :noh<CR><CR>
 
     " /Custom workflow commands }
