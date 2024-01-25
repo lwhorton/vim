@@ -5,7 +5,15 @@
 - install kitty
 - install profile for kitty.conf `ln -s ~/.vim/vim/kitty.conf ~/.config/kitty/`
 - install profile for .zshrc `ln -s ~/.vim/vim/.zshrc ~/.zshrc`
-- install profile for .vimrc `ln -s ~/.vim/vim/.vimrc ~/.vimrc`
+- install nvim lua configs:
+
+```
+ln -s ~/.vim/vim/init.lua ~/.config/nvim/init.lua
+ln -s ~/.vim/vim/lua ~/.config/nvim/lua
+ln -s ~/.vim/vim/colors ~/.config/nvim/colors
+mkdir -p ~/.config/nvim/undo
+```
+
 - install nvim, then setup initialization properly https://neovim.io/doc/user/nvim.html#nvim-from-vim
 - install ohmyzsh, and [zsh-dircolors](https://github.com/joel-porquet/zsh-dircolors-solarized)
 - install with brew:
@@ -17,7 +25,8 @@
 
 - install powerline (git clone https://github.com/powerline/fonts.git --depth=1e
 - install zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
-- run `:PlugInstall` after sourcing (`:source %`) the vimrc file
+- opening vim should trigger lazy.nvim to install a bunch of plugins. some
+  plugins have follow up steps, read those in the nvim/lua/plugin-configs.lua.
 - generate an ssh key and add it to github (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 - install coc-settings `ln -s ~/.vim/vim/coc-settings.json
   ~/.config/nvim/coc-settings.json` (:CocConfig to find the settings file
