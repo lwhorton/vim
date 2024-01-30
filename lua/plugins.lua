@@ -2,20 +2,39 @@
 
 return {
   -- color schemes
-  {
-    "Tsuzat/NeoSolarized.nvim",
-    lazy = false, -- make sure we load this during startup (it is the main colorscheme)
-    priority = 1000, -- make sure to load this before all the other start plugins
-    config = function()
-      vim.cmd [[ colorscheme NeoSolarized ]]
-    end
+  --{
+    --"Tsuzat/NeoSolarized.nvim",
+    --lazy = false, -- make sure we load this during startup (it is the main colorscheme)
+    --priority = 1000, -- make sure to load this before all the other start plugins
+  --},
+
+  {'morhetz/gruvbox', 
+  lazy = false,
+  priority = 1000,
+  config = function() 
+    vim.cmd.colorscheme('gruvbox') 
+    vim.cmd('set background=dark') 
+    -- https://github.com/morhetz/gruvbox/wiki/Configuration#ggruvbox_contrast_dark
+    -- soft/medium(default)/hard
+    vim.g.gruvbox_contrast_dark = 'medium'
+  end 
   },
+
 
   -- https://github.com/knubie/vim-kitty-navigator
   -- make sure to copy the two py files after install: run cp ./*.py ~/.config/kitty/
-  {'knubie/vim-kitty-navigator', 
-  lazy = false,
-  },
+  {'knubie/vim-kitty-navigator', lazy = false, },
+
+  --{
+    --'nvim-neo-tree/neo-tree.nvim',
+    --branch = "v3.x",
+    --dependencies = {
+      --"nvim-lua/plenary.nvim",
+      --"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+      --"MunifTanjim/nui.nvim",
+      ---- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+    --}
+  --},
 
   -- repl with auto-connect, :Console :FireplaceConnect 
   { 'tpope/vim-fireplace' },
@@ -88,9 +107,12 @@ return {
   },
   auto_install = true,
   config = function()
-    vim.cmd [[ TSUpdate]]
+    vim.cmd [[ TSUpdate ]]
   end},
-  { 'nvim-treesitter/nvim-treesitter-textobjects' },
+
+  { 'nvim-treesitter/nvim-treesitter-textobjects',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' }
+  },
 
 
   -- snippets
@@ -139,6 +161,19 @@ return {
   },
 
   {'guns/vim-clojure-static'},
+
+  {
+    'mikesmithgh/kitty-scrollback.nvim',
+    enabled = true,
+    lazy = true,
+    cmd = { 'KittyScrollbackGenerateKittens', 'KittyScrollbackCheckHealth' },
+    event = { 'User KittyScrollbackLaunch' },
+    -- version = '*', -- latest stable version, may have breaking changes if major version changed
+    version = '^3.0.0', -- pin major version, include fixes and features that do not have breaking changes
+    config = function()
+      require('kitty-scrollback').setup()
+    end,
+  },
 
 }
 

@@ -33,6 +33,12 @@ mkdir -p ~/.config/nvim/undo
   location)
 - install coc-{language} in vim `:CoCInstall coc-elixir coc-clojure coc-json ... etc`
 
+## colors
+
+https://sw.kovidgoyal.net/kitty/remote-control/#kitten-set-colors
+
+`$ kitty @ set-colors ~/.vim/vim/kitty.neosolarized-dark.conf`
+
 ## Reasonable git aliases
 
 ```

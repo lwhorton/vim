@@ -1,5 +1,79 @@
 -- a place to configure plugins
 
+--require('NeoSolarized').setup {
+  --style = "dark", -- "dark" or "light"
+  --transparent = false, -- true/false; Enable this to disable setting the background color
+  --terminal_colors = true, -- Configure the colors used when opening a `:terminal` in Neovim
+  --enable_italics = true, -- Italics for different hightlight groups (eg. Statement, Condition, Comment, Include, etc.)
+  --styles = {
+    ---- Style to be applied to different syntax groups
+    --comments = { italic = true },
+    --keywords = { italic = true },
+    --functions = { bold = true },
+    --variables = {},
+    --string = { italic = true },
+    --underline = true, -- for global underline
+    --undercurl = true, -- for global undercurl
+  --},
+  ---- Add specific hightlight groups
+  --on_highlights = function(highlights, colors) 
+    ---- highlights.Include.fg = colors.red -- Using `red` foreground for Includes
+  --end, 
+--}
+-- config has to be done BEFORE loading the colorscheme
+--vim.cmd('colorscheme NeoSolarized')
+
+--require('neo-tree').setup {
+  --close_if_last_window = false,
+  --enable_git_status = true,
+  --sort_case_insensitive = false,
+  --event_handlers = {
+    --{
+      --event = "file_opened",
+      --handler = function(file_path) 
+        ---- auto close the file tree when we open a file
+        --require("neo-tree.command").execute({ action = "close" })
+      --end
+    --}
+  --},
+  --filesystem = {
+    --window = {
+      --mappings = {
+        --["-"] = "navigate_up",
+        --["<C-c>"] = "clear_filter",
+      --}
+    --},
+    --filtered_items = {
+      --visible = false,
+      --hide_dotfiles = false,
+      --hide_gitignored = false,
+    --},
+    --follow_current_file = {
+      --enabled = false,
+      --leave_dirs_open = false,
+    --},
+  --},
+  --buffers = {
+    --follow_current_file = {
+      --enabled = false,
+      --leave_dirs_open = false,
+    --},
+  --},
+  --icon = {
+    --folder_closed = "",
+    --folder_open = "",
+    --folder_empty = "󰜌",
+    ---- The next two settings are only a fallback, if you use nvim-web-devicons and configure default icons there
+    ---- then these will never be used.
+    --default = "*",
+    --highlight = "NeoTreeFileIcon"
+  --},
+  --modified = {
+    --symbol = "[+]",
+    --highlight = "NeoTreeModified",
+  --},
+--}
+
 require('telescope').setup {
   defaults = {
     file_ignore_patterns = {
@@ -14,8 +88,9 @@ require('telescope').setup {
       "deps/",
       "client/js/",
       "public/js/",
-    }
-  }
+      "public/dist/",
+    },
+  },
 }
 
 require('nvim-treesitter.configs').setup {
@@ -53,6 +128,14 @@ require('nvim-treesitter.configs').setup {
         ["<e"] = "@parameter.inner",
       },
     },
+  },
+}
+
+require('kitty-scrollback').setup {
+  status_window = {
+    enabled = true,
+    show_timer = true,
+    style_simple = true,
   },
 }
 
@@ -99,8 +182,9 @@ vim.fn['lexima#add_rule']({char = "``", input_after = ''})
 vim.g.matchup_delim_stopline = 25000 -- for all matches 
 vim.g.matchup_matchparen_stopline = 400 -- for match highlighting only
 
--- from quickfix window, open file under cursor vertically/horizontally
+-- from a quickfix window, open file under cursor vertically or horizontally
+-- (like splits)
 vim.g.qfenter_keymap = {}
-vim.g.qfenter_keymap.open = ['<CR>']
-vim.g.qfenter_keymap.hopen = ['<leader>j']
-vim.g.qfenter_keymap.vopen = ['<leader>k']
+vim.g.qfenter_keymap.open = {'<CR>'}
+vim.g.qfenter_keymap.hopen = {'<leader>j'}
+vim.g.qfenter_keymap.vopen = {'<leader>k'}

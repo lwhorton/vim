@@ -11,7 +11,7 @@ vim.g.maplocalleader = ","
 vim.api.nvim_set_keymap('n', '<CR>', 'o<Esc>', { noremap = false })
 
 -- reselect text block after paste with gV
-vim.api.nvim_set_keymap('n', 'gV', [[`[' . getregtype(v:register)[0] . `]']]], { noremap = true, expr = true })
+vim.api.nvim_set_keymap('n', 'gV', [[`[' . getregtype(v:register)[0] . `]']], { noremap = true, expr = true })
 
 -- remap q (macro record) to q because q is now our q-is-window-everything bind
 vim.api.nvim_set_keymap('n', 'Q', 'q', { noremap = true })
@@ -79,9 +79,8 @@ vim.api.nvim_set_keymap('n', 'gd', '<Plug>(coc-definition)', { silent = true })
 --vim.api.nvim_set_keymap('n', 'gr', '<Plug>(coc-references)', { silent = true })
 vim.api.nvim_set_keymap('n', 'gr', '<cmd>Telescope coc references_used<CR>', { silent = true })
 vim.api.nvim_set_keymap('n', 'gi', '<Plug>(coc-implementation)', { silent = true })
-vim.api.nvim_set_keymap('n', 'K', ':lua show_documentation()<CR>', { noremap = true, silent = true })
 
-local function show_documentation()
+function show_documentation()
   local filetype = vim.bo.filetype
   if filetype == 'vim' or filetype == 'help' then
     vim.cmd('h ' .. vim.fn.expand('<cword>'))
@@ -93,6 +92,7 @@ local function show_documentation()
     end
   end
 end
+vim.api.nvim_set_keymap('n', 'K', ':lua show_documentation()<CR>', { noremap = true, silent = true })
 
 -- CoC auto-format
 vim.api.nvim_set_keymap('v', '<leader>f', '<Plug>(coc-format-selected)', {})
@@ -137,19 +137,12 @@ vim.api.nvim_set_keymap('n', 'cruw',
     { noremap = true, silent = true })
 -- #/clojure lsp
 
--- coc autocomplete '{key} = accept auto complete suggestion'
-vim.api.nvim_set_keymap('i', '<Tab>', "v:lua.tab_complete()", {expr = true, noremap = true, silent = true})
-
--- coc autocomplete next/prev as ctrl-jk up/down 
-vim.api.nvim_set_keymap('i', '<C-j>', "v:lua.coc_pum_next()", {expr = true, noremap = true, silent = true})
-vim.api.nvim_set_keymap('i', '<C-k>', "v:lua.coc_pum_prev()", {expr = true, noremap = true, silent = true})
-
 -- expose autocomplete coc functions as a lua funcs
-local function tab_complete()
+function coc_tab_complete()
   if vim.fn['coc#pum#visible']() ~= 0 then
     return vim.fn['coc#_select_confirm']()
   else
-    return "\\<C-j>"
+    return vim.api.nvim_replace_termcodes("<Tab>", true, true, true)
   end
 end
 
@@ -157,7 +150,7 @@ function coc_pum_next()
   if vim.fn['coc#pum#visible']() ~= 0 then
     return vim.fn['coc#pum#next'](1)
   else
-    return "\\<C-j>"
+    return vim.api.nvim_replace_termcodes("<C-j>", true, true, true)
   end
 end
 
@@ -165,7 +158,11 @@ function coc_pum_prev()
   if vim.fn['coc#pum#visible']() ~= 0 then
     return vim.fn['coc#pum#prev'](1)
   else
-    return "\\<C-k>"
+    return vim.api.nvim_replace_termcodes("<C-k>", true, true, true)
   end
 end
-
+-- coc autocomplete 'Tab = accept auto complete suggestion'
+vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.coc_tab_complete()', { noremap = true, expr = true, silent = true })
+-- coc autocomplete next/prev as ctrl-jk up/down 
+vim.api.nvim_set_keymap('i', '<C-j>', "v:lua.coc_pum_next()", {expr = true, noremap = true, silent = true})
+vim.api.nvim_set_keymap('i', '<C-k>', "v:lua.coc_pum_prev()", {expr = true, noremap = true, silent = true})

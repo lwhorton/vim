@@ -1,7 +1,11 @@
 -- a place for all the nvim options
 
 vim.cmd('set nocompatible')
-vim.opt.updatetime = 750
+vim.cmd('syntax enable')
+vim.opt.updatetime = 400
+-- always show the signcolumn, otherwise completions would shift the text each
+-- time diagnostics appear/become resolved
+vim.cmd('set signcolumn=yes')
 
 -- limit syntax highlighting width, otherwise the world stops
 vim.o.synmaxcol = 300
@@ -30,13 +34,6 @@ vim.opt.textwidth = 80
 
 -- allow deleting text inserted before current insert mode started
 vim.opt.backspace = 'indent,eol,start'
-
--- enable vim solarized color scheme 
-vim.cmd('syntax enable')
-vim.cmd('colorscheme NeoSolarized')
-vim.opt.termguicolors = true
-vim.opt.background = 'light'
---vim.opt.background = 'dark'
 
 -- limit syntax highlighting otherwise the world stops
 vim.opt.synmaxcol = 256
@@ -68,12 +65,13 @@ vim.opt.conceallevel = 0
 -- optional, configure as-you-type completions
 vim.cmd('set completeopt=menu,menuone,preview,noselect,noinsert')
 
--- the default matching cursor color is bad, so fix it
+-- the default matching cursor color is bad (for some themes): so fix it
 -- https://stackoverflow.com/questions/10746750/set-vim-bracket-highlighting-colors
 vim.api.nvim_set_hl(0, 'MatchParen', { 
   bold = true, 
   standout = false,
   underdouble = true,
-  fg = 'Black', 
-  bg = 'none' })
+  --fg = 'Black', 
+  bg = 'none',
+})
 

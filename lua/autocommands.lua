@@ -2,31 +2,31 @@
 --
 
 -- the default floating window colors and other such highlights for coc
--- suggestions / docs are awful, fix that
-local function my_colors_setup()
-  vim.cmd [[
-    hi CocFloating ctermbg=DarkBlue
-    hi CocHintFloat ctermbg=Green
-    hi CocHintSign ctermbg=Green
-    hi CocHintHighlight ctermbg=Green
-    hi CocHintVirtualText ctermbg=Green
-    hi CocWarningFloat ctermbg=Yellow
-    hi CocWarningSign ctermbg=Yellow
-    hi CocWarningHighlight ctermbg=Yellow
-    hi CocWarningVirtualText ctermbg=Yellow
-    hi CocErrorFloat ctermfg=DarkRed
-    hi CocErrorSign ctermfg=DarkBlue
-    hi CocErrorHighlight ctermfg=DarkRed
-    hi CocErrorVirtualText ctermfg=DarkRed
-    hi FgCocErrorFloatBgCocFloating ctermfg=Red
-  ]]
-end
-vim.api.nvim_create_augroup('colorscheme_coc_setup', { clear = true })
-vim.api.nvim_create_autocmd('VimEnter', {
-  group = 'colorscheme_coc_setup',
-  pattern = '*',
-  callback = my_colors_setup
-})
+-- suggestions / docs are awful for some themes; fix that
+--local function my_colors_setup()
+  --vim.cmd [[
+    --hi CocFloating ctermbg=DarkBlue
+    --hi CocHintFloat ctermbg=Green
+    --hi CocHintSign ctermbg=Green
+    --hi CocHintHighlight ctermbg=Green
+    --hi CocHintVirtualText ctermbg=Green
+    --hi CocWarningFloat ctermbg=Yellow
+    --hi CocWarningSign ctermbg=Yellow
+    --hi CocWarningHighlight ctermbg=Yellow
+    --hi CocWarningVirtualText ctermbg=Yellow
+    --hi CocErrorFloat ctermfg=DarkRed
+    --hi CocErrorSign ctermfg=DarkBlue
+    --hi CocErrorHighlight ctermfg=DarkRed
+    --hi CocErrorVirtualText ctermfg=DarkRed
+    --hi FgCocErrorFloatBgCocFloating ctermfg=Red
+  --]]
+--end
+--vim.api.nvim_create_augroup('colorscheme_coc_setup', { clear = true })
+--vim.api.nvim_create_autocmd('VimEnter', {
+  --group = 'colorscheme_coc_setup',
+  --pattern = '*',
+  --callback = my_colors_setup
+--})
 
 -- remove trailing whitespace, persist cursor position on save
 local function strip_trailing_whitespaces()
