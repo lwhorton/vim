@@ -79,20 +79,18 @@ vim.api.nvim_set_keymap('n', 'gd', '<Plug>(coc-definition)', { silent = true })
 --vim.api.nvim_set_keymap('n', 'gr', '<Plug>(coc-references)', { silent = true })
 vim.api.nvim_set_keymap('n', 'gr', '<cmd>Telescope coc references_used<CR>', { silent = true })
 vim.api.nvim_set_keymap('n', 'gi', '<Plug>(coc-implementation)', { silent = true })
-
+-- use K to show documentation in preview window
 function show_documentation()
-  local filetype = vim.bo.filetype
-  if filetype == 'vim' or filetype == 'help' then
-    vim.cmd('h ' .. vim.fn.expand('<cword>'))
-  else
-    if vim.fn.CocAction('hasProvider', 'hover') == 1 then
-      vim.fn.CocActionAsync('doHover')
+    local cw = vim.fn.expand('<cword>')
+    if vim.fn.index({'vim', 'help'}, vim.bo.filetype) >= 0 then
+        vim.api.nvim_command('h ' .. cw)
+    elseif vim.api.nvim_eval('coc#rpc#ready()') then
+        vim.fn.CocActionAsync('doHover')
     else
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('K', true, false, true), 'n', true)
+        vim.api.nvim_command('!' .. vim.o.keywordprg .. ' ' .. cw)
     end
-  end
 end
-vim.api.nvim_set_keymap('n', 'K', ':lua show_documentation()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'K', ':lua show_documentation()<CR>', { silent = true })
 
 -- CoC auto-format
 vim.api.nvim_set_keymap('v', '<leader>f', '<Plug>(coc-format-selected)', {})

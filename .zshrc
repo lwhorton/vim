@@ -160,4 +160,18 @@ abbreviate_path() {
     echo "$abbr_path"
 }
 #PROMPT='[%T] $(summarize_directories)$ '
-PROMPT='$(date "+%H:%M:%S") ${USER}@$(hostname -s | cut -c 1-8) $(abbreviate_path)> '
+
+# use kitty's theme to color the prompt
+theme_conf="$HOME/.config/kitty/current-theme.conf"
+
+# Extract colors
+foreground_color=$(grep 'foreground' $theme_conf | awk '{print $2}')
+background_color=$(grep 'background' $theme_conf | awk '{print $2}')
+color0=$(grep 'color0' $theme_conf | awk '{print $2}')
+color1=$(grep 'color1' $theme_conf | awk '{print $2}')
+color2=$(grep 'color2' $theme_conf | awk '{print $2}')
+color3=$(grep 'color3' $theme_conf | awk '{print $2}')
+
+# Define colors for prompt
+PROMPT='%F{$color2}$(date "+%m/%d %H:%M:%S")%f ${USER}@$(hostname -s | cut -c 1-8) %F{$color3}$(abbreviate_path)%f> '
+PS1=$PROMPT

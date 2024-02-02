@@ -143,7 +143,6 @@ return {
   -- enable opening windows directly from quickfix menu (i, enter, etc.)
   { 'yssl/QFEnter' },
 
-
   -- lsp-based autocompletion
   -- dont forget to CocInstall coc-json, coc-clojure, coc-tsserver, etc.
   { 'neoclide/coc.nvim', 
@@ -175,6 +174,22 @@ return {
     end,
   },
 
+  -- debugger
+  {"mfussenegger/nvim-dap"},
+  {
+    'microsoft/vscode-js-debug',
+    build = 'npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out'
+  },
+  {'mxsdev/nvim-dap-vscode-js',
+    requires = {'mfussenegger/nvim-dap', 'microsoft/vscode-js-debug'},
+  },
+  { "rcarriga/nvim-dap-ui", 
+    requires = {"mfussenegger/nvim-dap"},
+    config = function()
+      -- this has to happen before anything else in dapui
+      require('dapui').setup()
+    end
+  },
 }
 
 
