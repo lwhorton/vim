@@ -55,10 +55,8 @@ return {
   -- press '-' to get a project drawer / tree
   { 'tpope/vim-vinegar' },
 
-
-  -- yank history :YRShow
-  { 'vim-scripts/YankRing.vim' },
-
+  -- yank history :Yanks
+  { 'maxbrunsfeld/vim-yankstack' },
 
   -- toggling comments for line(s) <leader>c<space>
   {'scrooloose/nerdcommenter'},
@@ -82,7 +80,6 @@ return {
   -- dont forget to run :TSInstall all, then :TSUpdate or :TSUpdate {language parser} after install
   ensure_installed = {
     'bash',
-    'clojure',
     'cmake',
     'comment',
     'css',
@@ -116,8 +113,13 @@ return {
 
 
   -- snippets
-  { 'hrsh7th/vim-vsnip' },
-  { 'hrsh7th/vim-vsnip-integ' },
+  --{
+    --"L3MON4D3/LuaSnip",
+    ---- follow latest release.
+    --version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+    ---- install jsregexp (optional!).
+    --build = "make install_jsregexp"
+  --},
 
   -- auto insert matching \{ \[ \( etc.
   { 'cohama/lexima.vim' },

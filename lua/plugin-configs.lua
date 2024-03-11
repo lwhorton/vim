@@ -96,6 +96,9 @@ require('telescope').setup {
 }
 
 require('nvim-treesitter.configs').setup {
+  indent = {
+    enable = true,
+  },
   highlight = {
     enable = true,
 
@@ -103,7 +106,7 @@ require('nvim-treesitter.configs').setup {
     -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
     -- the name of the parser)
     -- list of language that will be disabled
-    disable = { "c" },
+    disable = { "c", "clojure" },
     -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
     disable = function(lang, buf)
       local max_filesize = 100 * 1024 -- 100 KB
@@ -120,17 +123,17 @@ require('nvim-treesitter.configs').setup {
     additional_vim_regex_highlighting = false,
   },
   -- give other languages lisp-ey structural editing: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-  textobjects = {
-    swap = {
-      enable = true,
-      swap_next = {
-        [">e"] = "@parameter.inner",
-      },
-      swap_previous = {
-        ["<e"] = "@parameter.inner",
-      },
-    },
-  },
+  --textobjects = {
+    --swap = {
+      --enable = true,
+      --swap_next = {
+        --[">e"] = "@parameter.inner",
+      --},
+      --swap_previous = {
+        --["<e"] = "@parameter.inner",
+      --},
+    --},
+  --},
 }
 
 require('kitty-scrollback').setup {

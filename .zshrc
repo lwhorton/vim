@@ -113,6 +113,8 @@ alias sbpx="~/dev/work/cloud-sql-proxy --port 5432 simbe-cloud:us-central1:simbe
 
 alias dc="docker compose"
 
+alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/luke/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/luke/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 

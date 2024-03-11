@@ -51,19 +51,14 @@ vim.api.nvim_set_keymap('v', '>', '>gv', { noremap = true })
 
 
 -- #order is important here:
--- unmap the ctrl-p/n from yank 
-vim.g.yankring_replace_n_pkey = ''
-vim.g.yankring_replace_n_nkey = ''
--- unmap <C-p> and <C-n> in normal mode to avoid conflicts
-vim.api.nvim_set_keymap('n', '<C-p>', '<NOP>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-n>', '<NOP>', { noremap = true, silent = true })
 -- display yankring w/ ctrl-y
-vim.api.nvim_set_keymap('n', '<C-y>', ':YRShow<CR>', { noremap = true  })
+vim.api.nvim_set_keymap('n', '<C-y>', ':Yanks<CR>', { noremap = true  })
 -- #/order
 
 -- search across file/symbols/buffers/tags with rip-grep, using FZF's syntax and window
 vim.api.nvim_set_keymap('n', '<C-s>', '<cmd>Telescope live_grep<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-p>', '<cmd>Telescope find_files<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-r>', '<cmd>Telescope resume<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<CR>', { noremap = true, silent = true })
 
@@ -97,24 +92,27 @@ vim.api.nvim_set_keymap('v', '<leader>f', '<Plug>(coc-format-selected)', {})
 vim.api.nvim_set_keymap('n', '<leader>f', '<Plug>(coc-format-selected)', {})
 
 -- #clojure lsp magic keybinds
+function Expand(exp)
+  local result = vim.fn.expand(exp)
+  return result == '' and '' or 'file://' .. result
+end
+
 -- auto-import missing clojure libs
 vim.api.nvim_set_keymap('n', 'cram', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': {vim.fn.expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
     { noremap = true, silent = true })
 
 -- clean clojure namespaces (sort them)
 vim.api.nvim_set_keymap('n', 'crcn', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': {vim.fn.expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
     { noremap = true, silent = true })
 
 -- move form into let
-vim.api.nvim_set_keymap('n', 'crml', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'move-to-let', 'arguments': {vim.fn.expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1, vim.fn.input('Binding name: ')}})<CR>", 
-    { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'crml', "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {command = 'move-to-let', arguments = {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1, vim.fn.input('Binding name: ')}}, function(_, _, _)\nend)<CR>", {noremap = true, silent = true})
 
 -- extract form into function 
 -- vim.api.nvim_set_keymap('n', 'cref', 
---    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': {vim.fn.expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1, vim.fn.input('Function name: ')}})<CR>", 
+--    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1, vim.fn.input('Function name: ')}})<CR>", 
 --    { noremap = true, silent = true })
 
 -- rename symbol under cursor
@@ -122,16 +120,16 @@ vim.api.nvim_set_keymap('n', 'crrn', '<Plug>(coc-rename)', { noremap = true, sil
 
 -- auto threaders / unwinders
 vim.api.nvim_set_keymap('n', 'crtf', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': {vim.fn.expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
     { noremap = true, silent = true })
 
 vim.api.nvim_set_keymap('n', 'crtl', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': {vim.fn.expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
     { noremap = true, silent = true })
 
 -- unwind thread
 vim.api.nvim_set_keymap('n', 'cruw', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-thread', 'arguments': {vim.fn.expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-thread', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
     { noremap = true, silent = true })
 -- #/clojure lsp
 

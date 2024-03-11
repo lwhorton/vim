@@ -1,11 +1,13 @@
 {
   "coc.preferences.useQuickfixForLocations": true,
   "suggest.snippetIndicator": "🍦",
-  "clojure-lsp.trace.server": "verbose",
   "diagnostic.showUnused": true,
   "diagnostic.showDeprecated": true,
   "languageserver": {
     "clojure-lsp": {
+      "trace": {
+        "server": "verbose"
+      },
       "command": "/opt/homebrew/bin/clojure-lsp",
       //"command": "/Users/luke/dev/clojure-lsp",
       //"args": ["-c", "clojure -Scp $(clj -Spath) -m clojure-lsp.main"],
@@ -20,11 +22,28 @@
         "ignore-classpath-directories": true
       }
     },
+
     "tsserver": {
       // https://github.com/neoclide/coc-tsserver/tree/9ff880ef3fbf1680daefe4dacfafdce8ffd2817b#configuration-options
+      "tsserver.enable": true,
+      "tsserver.filetypes": [
+        "javascript",
+        "typescript"
+      ],
+      "javascript.filetypes": [
+        "javascript"
+      ],
+      "javascript.format.enable": true,
+      "javascript.format.insertSpaceBeforeFunctionParenthesis": false,
+      "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
+      "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
+      "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": true,
+      "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+      "javascript.format.semicolons": "remove",
     },
+
+    "elixir.pathToElixirLS": "~/.elixir-ls/release/language_server.sh",
+    "eslint.packageManager": "pnpm",
   },
-  "elixir.pathToElixirLS": "~/.elixir-ls/release/language_server.sh",
-  "eslint.packageManager": "pnpm",
   "workspace.workspaceFolderCheckCwd": false
 }
