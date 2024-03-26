@@ -25,16 +25,23 @@ return {
   -- make sure to copy the two py files after install: run cp ./*.py ~/.config/kitty/
   {'knubie/vim-kitty-navigator', lazy = false, },
 
-  --{
-    --'nvim-neo-tree/neo-tree.nvim',
-    --branch = "v3.x",
-    --dependencies = {
-      --"nvim-lua/plenary.nvim",
-      --"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      --"MunifTanjim/nui.nvim",
-      ---- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
-    --}
-  --},
+  -- setup native LSP with a completion engine
+  { 'neovim/nvim-lspconfig' },
+  -- 
+  {'hrsh7th/nvim-cmp'},
+  {'hrsh7th/cmp-nvim-lsp'},
+  {'hrsh7th/cmp-nvim-lsp-signature-help'},
+  {'hrsh7th/cmp-path'},
+  -- we dont need exactly LuaSnip for nvim-cmp, but we need at least some snippet engine
+  {
+    "L3MON4D3/LuaSnip",
+    -- follow latest release.
+    version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+    -- install jsregexp (optional!).
+    build = "make install_jsregexp"
+  },
+  -- luasnip needs a completion source
+  { 'saadparwaiz1/cmp_luasnip' },
 
   -- repl with auto-connect, :Console :FireplaceConnect 
   { 'tpope/vim-fireplace' },
@@ -56,7 +63,7 @@ return {
   { 'tpope/vim-vinegar' },
 
   -- yank history :Yanks
-  { 'maxbrunsfeld/vim-yankstack' },
+  --{ 'maxbrunsfeld/vim-yankstack' },
 
   -- toggling comments for line(s) <leader>c<space>
   {'scrooloose/nerdcommenter'},
@@ -71,9 +78,6 @@ return {
     tag = '0.1.5',
     dependencies = { 'nvim-lua/plenary.nvim' }
   },
-  -- optional deps for telescope
-  { 'fannheyward/telescope-coc.nvim'},
-
 
   -- syntax-aware select / move / swap / peek for non-lisp shitters
   { 'nvim-treesitter/nvim-treesitter', 
@@ -82,6 +86,7 @@ return {
     'bash',
     'cmake',
     'comment',
+    'clojure',
     'css',
     'dockerfile',
     'elixir',
@@ -107,26 +112,11 @@ return {
     vim.cmd [[ TSUpdate ]]
   end},
 
-  { 'nvim-treesitter/nvim-treesitter-textobjects',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' }
-  },
-
-
-  -- snippets
-  --{
-    --"L3MON4D3/LuaSnip",
-    ---- follow latest release.
-    --version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
-    ---- install jsregexp (optional!).
-    --build = "make install_jsregexp"
-  --},
-
   -- auto insert matching \{ \[ \( etc.
   { 'cohama/lexima.vim' },
 
   -- vim motion to match to language constructs like [, {, if/do blocks 
   { 'andymass/vim-matchup' },
-
 
   -- editorconfig.org for vim
   {  'editorconfig/editorconfig-vim' },
@@ -145,13 +135,6 @@ return {
   -- enable opening windows directly from quickfix menu (i, enter, etc.)
   { 'yssl/QFEnter' },
 
-  -- lsp-based autocompletion
-  -- dont forget to CocInstall coc-json, coc-clojure, coc-tsserver, etc.
-  { 'neoclide/coc.nvim', 
-  branch = 'release'}, 
-
-  -- Plug 'elixir-lsp/coc-elixir', {'do': 'yarn install && yarn prepack'}
-  { 'neoclide/coc-tsserver'},
 
   -- preview markdown files in a browser
   {
@@ -160,8 +143,6 @@ return {
     ft = { 'markdown' },
     build = function() vim.fn["mkdp#util#install"]() end,
   },
-
-  {'guns/vim-clojure-static'},
 
   {
     'mikesmithgh/kitty-scrollback.nvim',
@@ -183,10 +164,10 @@ return {
     build = 'npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out'
   },
   {'mxsdev/nvim-dap-vscode-js',
-    requires = {'mfussenegger/nvim-dap', 'microsoft/vscode-js-debug'},
+    dependencies = {'mfussenegger/nvim-dap', 'microsoft/vscode-js-debug'},
   },
   { "rcarriga/nvim-dap-ui", 
-    requires = {"mfussenegger/nvim-dap"},
+    dependencies = {"mfussenegger/nvim-dap"},
     config = function()
       -- this has to happen before anything else in dapui
       require('dapui').setup()

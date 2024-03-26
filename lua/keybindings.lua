@@ -69,96 +69,97 @@ vim.api.nvim_set_keymap('n', '<CR>', ':noh<CR><CR>', { noremap = true, silent = 
 
 -- lsp shortcuts
 
-vim.api.nvim_set_keymap('n', 'gd', '<Plug>(coc-definition)', { silent = true })
--- use telescope instead of coc for references search
---vim.api.nvim_set_keymap('n', 'gr', '<Plug>(coc-references)', { silent = true })
-vim.api.nvim_set_keymap('n', 'gr', '<cmd>Telescope coc references_used<CR>', { silent = true })
-vim.api.nvim_set_keymap('n', 'gi', '<Plug>(coc-implementation)', { silent = true })
--- use K to show documentation in preview window
-function show_documentation()
-    local cw = vim.fn.expand('<cword>')
-    if vim.fn.index({'vim', 'help'}, vim.bo.filetype) >= 0 then
-        vim.api.nvim_command('h ' .. cw)
-    elseif vim.api.nvim_eval('coc#rpc#ready()') then
-        vim.fn.CocActionAsync('doHover')
-    else
-        vim.api.nvim_command('!' .. vim.o.keywordprg .. ' ' .. cw)
-    end
-end
-vim.api.nvim_set_keymap('n', 'K', ':lua show_documentation()<CR>', { silent = true })
+-- DISABLED WHILE WE TRY NVIM LSP NATIVE 
+--vim.api.nvim_set_keymap('n', 'gd', '<Plug>(coc-definition)', { silent = true })
+---- use telescope instead of coc for references search
+----vim.api.nvim_set_keymap('n', 'gr', '<Plug>(coc-references)', { silent = true })
+--vim.api.nvim_set_keymap('n', 'gr', '<cmd>Telescope coc references_used<CR>', { silent = true })
+--vim.api.nvim_set_keymap('n', 'gi', '<Plug>(coc-implementation)', { silent = true })
+---- use K to show documentation in preview window
+--function show_documentation()
+    --local cw = vim.fn.expand('<cword>')
+    --if vim.fn.index({'vim', 'help'}, vim.bo.filetype) >= 0 then
+        --vim.api.nvim_command('h ' .. cw)
+    --elseif vim.api.nvim_eval('coc#rpc#ready()') then
+        --vim.fn.CocActionAsync('doHover')
+    --else
+        --vim.api.nvim_command('!' .. vim.o.keywordprg .. ' ' .. cw)
+    --end
+--end
+--vim.api.nvim_set_keymap('n', 'K', ':lua show_documentation()<CR>', { silent = true })
 
--- CoC auto-format
-vim.api.nvim_set_keymap('v', '<leader>f', '<Plug>(coc-format-selected)', {})
-vim.api.nvim_set_keymap('n', '<leader>f', '<Plug>(coc-format-selected)', {})
+---- CoC auto-format
+--vim.api.nvim_set_keymap('v', '<leader>f', '<Plug>(coc-format-selected)', {})
+--vim.api.nvim_set_keymap('n', '<leader>f', '<Plug>(coc-format-selected)', {})
 
--- #clojure lsp magic keybinds
-function Expand(exp)
-  local result = vim.fn.expand(exp)
-  return result == '' and '' or 'file://' .. result
-end
+---- #clojure lsp magic keybinds
+--function Expand(exp)
+  --local result = vim.fn.expand(exp)
+  --return result == '' and '' or 'file://' .. result
+--end
 
--- auto-import missing clojure libs
-vim.api.nvim_set_keymap('n', 'cram', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
-    { noremap = true, silent = true })
+---- auto-import missing clojure libs
+--vim.api.nvim_set_keymap('n', 'cram', 
+    --"<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'add-missing-libspec', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    --{ noremap = true, silent = true })
 
--- clean clojure namespaces (sort them)
-vim.api.nvim_set_keymap('n', 'crcn', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
-    { noremap = true, silent = true })
+---- clean clojure namespaces (sort them)
+--vim.api.nvim_set_keymap('n', 'crcn', 
+    --"<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'clean-ns', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    --{ noremap = true, silent = true })
 
--- move form into let
-vim.api.nvim_set_keymap('n', 'crml', "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {command = 'move-to-let', arguments = {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1, vim.fn.input('Binding name: ')}}, function(_, _, _)\nend)<CR>", {noremap = true, silent = true})
+---- move form into let
+--vim.api.nvim_set_keymap('n', 'crml', "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {command = 'move-to-let', arguments = {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1, vim.fn.input('Binding name: ')}}, function(_, _, _)\nend)<CR>", {noremap = true, silent = true})
 
--- extract form into function 
--- vim.api.nvim_set_keymap('n', 'cref', 
---    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1, vim.fn.input('Function name: ')}})<CR>", 
---    { noremap = true, silent = true })
+---- extract form into function 
+---- vim.api.nvim_set_keymap('n', 'cref', 
+----    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'extract-function', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1, vim.fn.input('Function name: ')}})<CR>", 
+----    { noremap = true, silent = true })
 
--- rename symbol under cursor
-vim.api.nvim_set_keymap('n', 'crrn', '<Plug>(coc-rename)', { noremap = true, silent = true })
+---- rename symbol under cursor
+--vim.api.nvim_set_keymap('n', 'crrn', '<Plug>(coc-rename)', { noremap = true, silent = true })
 
--- auto threaders / unwinders
-vim.api.nvim_set_keymap('n', 'crtf', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
-    { noremap = true, silent = true })
+---- auto threaders / unwinders
+--vim.api.nvim_set_keymap('n', 'crtf', 
+    --"<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-first', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    --{ noremap = true, silent = true })
 
-vim.api.nvim_set_keymap('n', 'crtl', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
-    { noremap = true, silent = true })
+--vim.api.nvim_set_keymap('n', 'crtl', 
+    --"<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'thread-last', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    --{ noremap = true, silent = true })
 
--- unwind thread
-vim.api.nvim_set_keymap('n', 'cruw', 
-    "<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-thread', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
-    { noremap = true, silent = true })
--- #/clojure lsp
+---- unwind thread
+--vim.api.nvim_set_keymap('n', 'cruw', 
+    --"<cmd>lua vim.fn.CocRequest('clojure-lsp', 'workspace/executeCommand', {'command': 'unwind-thread', 'arguments': {Expand('%:p'), vim.fn.line('.') - 1, vim.fn.col('.') - 1}})<CR>", 
+    --{ noremap = true, silent = true })
+---- #/clojure lsp
 
--- expose autocomplete coc functions as a lua funcs
-function coc_tab_complete()
-  if vim.fn['coc#pum#visible']() ~= 0 then
-    return vim.fn['coc#_select_confirm']()
-  else
-    return vim.api.nvim_replace_termcodes("<Tab>", true, true, true)
-  end
-end
+---- expose autocomplete coc functions as a lua funcs
+--function coc_tab_complete()
+  --if vim.fn['coc#pum#visible']() ~= 0 then
+    --return vim.fn['coc#_select_confirm']()
+  --else
+    --return vim.api.nvim_replace_termcodes("<Tab>", true, true, true)
+  --end
+--end
 
-function coc_pum_next()
-  if vim.fn['coc#pum#visible']() ~= 0 then
-    return vim.fn['coc#pum#next'](1)
-  else
-    return vim.api.nvim_replace_termcodes("<C-j>", true, true, true)
-  end
-end
+--function coc_pum_next()
+  --if vim.fn['coc#pum#visible']() ~= 0 then
+    --return vim.fn['coc#pum#next'](1)
+  --else
+    --return vim.api.nvim_replace_termcodes("<C-j>", true, true, true)
+  --end
+--end
 
-function coc_pum_prev()
-  if vim.fn['coc#pum#visible']() ~= 0 then
-    return vim.fn['coc#pum#prev'](1)
-  else
-    return vim.api.nvim_replace_termcodes("<C-k>", true, true, true)
-  end
-end
--- coc autocomplete 'Tab = accept auto complete suggestion'
-vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.coc_tab_complete()', { noremap = true, expr = true, silent = true })
--- coc autocomplete next/prev as ctrl-jk up/down 
-vim.api.nvim_set_keymap('i', '<C-j>', "v:lua.coc_pum_next()", {expr = true, noremap = true, silent = true})
-vim.api.nvim_set_keymap('i', '<C-k>', "v:lua.coc_pum_prev()", {expr = true, noremap = true, silent = true})
+--function coc_pum_prev()
+  --if vim.fn['coc#pum#visible']() ~= 0 then
+    --return vim.fn['coc#pum#prev'](1)
+  --else
+    --return vim.api.nvim_replace_termcodes("<C-k>", true, true, true)
+  --end
+--end
+---- coc autocomplete 'Tab = accept auto complete suggestion'
+--vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.coc_tab_complete()', { noremap = true, expr = true, silent = true })
+---- coc autocomplete next/prev as ctrl-jk up/down 
+--vim.api.nvim_set_keymap('i', '<C-j>', "v:lua.coc_pum_next()", {expr = true, noremap = true, silent = true})
+--vim.api.nvim_set_keymap('i', '<C-k>', "v:lua.coc_pum_prev()", {expr = true, noremap = true, silent = true})

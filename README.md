@@ -23,15 +23,11 @@ mkdir -p ~/.config/nvim/undo
     ack
     asdf
 
-- install powerline (git clone https://github.com/powerline/fonts.git --depth=1e
+- install powerline `git clone https://github.com/powerline/fonts.git --depth=1e`
 - install zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
 - opening vim should trigger lazy.nvim to install a bunch of plugins. some
   plugins have follow up steps, read those in the nvim/lua/plugin-configs.lua.
 - generate an ssh key and add it to github (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-- install coc-settings `ln -s ~/.vim/vim/coc-settings.json
-  ~/.config/nvim/coc-settings.json` (:CocConfig to find the settings file
-  location)
-- install coc-{language} in vim `:CoCInstall coc-elixir coc-clojure coc-json ... etc`
 
 ## colors
 
@@ -49,28 +45,22 @@ git config --global alias.st status
 git config --global user.email lwhorton@users.noreply.github.com
 git config --global user.name "lwhorton"
 git config --global core.editor "vim"
+git config --global push.default current
+git config --global rerere.enabled true
 ```
 
-## snippets (using vim-vsnip for now, which requires no python/jvm/node nonsense)
+## snippets 
 
-we have to symlink the persisted snips (in snips/*) to the vsnip dir
-
-`echo g:vsnip_snippet_dir (~/.vsnip by default)`
-
-```bash
-mkdir -p ~/.vim/.vsnip
-ln -s ~/.vim/.vsnip ~/.vim/snips/*
-```
-
-For typescript/javascript, just `ln -s /path/to/javascript.snippets
-/path/to/typescript.snippets` because they should be basically identical.
+we use luasnip and nvim-cmp for completion/snippets. snippets are stored under
+lua/snippets/{language-name}.snippets .
 
 ## Get persistent undo's in different vim sessions
+
 ```bash
 mkdir ~/.vim/undo
 ```
 
-## pick an lsp
+## LSP
 
 ### elixir
 
@@ -96,8 +86,5 @@ $ mix elixir_ls.release -o rel
 
 ### clojure
 
-- install clojure-lsp binary https://github.com/snoe/clojure-lsp (typically to
-  /usr/local/bin)
-- install coc (automcompletion) https://github.com/neoclide/coc.nvim for intellisense
-- install coc-{language} `CoCInstall coc-clojure`
-- sym-link coc-settings.json to ~/.config/nvim/coc-settings.json
+- install the language server: clojure-lsp https://clojure-lsp.io/
+- use this nvim lsp client for the rest: https://github.com/neovim/nvim-lspconfig

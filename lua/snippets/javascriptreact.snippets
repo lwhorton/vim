@@ -1,0 +1,32 @@
+snippet cl "console log"
+	console.log(${0})
+
+snippet ld "logger debug"
+	logger.debug(${0})
+
+snippet fn "function"
+	function ${1:function_name}(${2}) {
+		${0:${VISUAL}}
+	}
+
+snippet afn "async function"
+	async function ${1:function_name}(${2}) {
+		${0:${VISUAL}}
+	}
+
+snippet try "try { ... } catch(e) { ... }"
+	try {
+		${0:${VISUAL}}
+	} catch (${1:e}) {
+		${2:/* handle error */}
+	}
+
+snippet switch
+	switch (${1:expression}) {
+		case '${3:case}':
+			${4}
+			break;
+		${0}
+		default:
+			${2}
+	}

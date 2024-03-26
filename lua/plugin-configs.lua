@@ -1,78 +1,169 @@
 -- a place to configure plugins
 
---require('NeoSolarized').setup {
-  --style = "dark", -- "dark" or "light"
-  --transparent = false, -- true/false; Enable this to disable setting the background color
-  --terminal_colors = true, -- Configure the colors used when opening a `:terminal` in Neovim
-  --enable_italics = true, -- Italics for different hightlight groups (eg. Statement, Condition, Comment, Include, etc.)
-  --styles = {
-    ---- Style to be applied to different syntax groups
-    --comments = { italic = true },
-    --keywords = { italic = true },
-    --functions = { bold = true },
-    --variables = {},
-    --string = { italic = true },
-    --underline = true, -- for global underline
-    --undercurl = true, -- for global undercurl
-  --},
-  ---- Add specific hightlight groups
-  --on_highlights = function(highlights, colors) 
-    ---- highlights.Include.fg = colors.red -- Using `red` foreground for Includes
-  --end, 
---}
--- config has to be done BEFORE loading the colorscheme
---vim.cmd('colorscheme NeoSolarized')
+-- setup lsp
 
---require('neo-tree').setup {
-  --close_if_last_window = false,
-  --enable_git_status = true,
-  --sort_case_insensitive = false,
-  --event_handlers = {
-    --{
-      --event = "file_opened",
-      --handler = function(file_path) 
-        ---- auto close the file tree when we open a file
-        --require("neo-tree.command").execute({ action = "close" })
-      --end
-    --}
-  --},
-  --filesystem = {
-    --window = {
-      --mappings = {
-        --["-"] = "navigate_up",
-        --["<C-c>"] = "clear_filter",
-      --}
-    --},
-    --filtered_items = {
-      --visible = false,
-      --hide_dotfiles = false,
-      --hide_gitignored = false,
-    --},
-    --follow_current_file = {
-      --enabled = false,
-      --leave_dirs_open = false,
-    --},
-  --},
-  --buffers = {
-    --follow_current_file = {
-      --enabled = false,
-      --leave_dirs_open = false,
-    --},
-  --},
-  --icon = {
-    --folder_closed = "",
-    --folder_open = "",
-    --folder_empty = "󰜌",
-    ---- The next two settings are only a fallback, if you use nvim-web-devicons and configure default icons there
-    ---- then these will never be used.
-    --default = "*",
-    --highlight = "NeoTreeFileIcon"
-  --},
-  --modified = {
-    --symbol = "[+]",
-    --highlight = "NeoTreeModified",
-  --},
---}
+-- use this on_attach function to only map the following keys after the language
+-- server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local bufopts = { noremap=true, silent=true, buffer=bufnr }
+
+  -- mappings to LSP functions
+  -- keymap.set not nvim_set_keymap because we're referencing functions
+  vim.keymap.set('n', 'gr', function() require('telescope.builtin').lsp_references() end, { noremap=true, silent = true, buffer=bufnr })
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+  vim.keymap.set('n', 'gK', vim.lsp.buf.signature_help, bufopts)
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+  vim.keymap.set('n', 'crrn', vim.lsp.buf.rename, bufopts)
+  vim.keymap.set('n', 'crca', vim.lsp.buf.code_action, bufopts)
+
+  -- clojure specific awesomeness: https://clojure-lsp.io/features/#clojure-lsp-extra-commands
+  if client.name == "clojure" then
+    vim.keymap.set('n', 'cram', vim.lsp.buf.add_missing_libspec, bufopts)
+    vim.keymap.set('n', 'crcn', vim.lsp.buf.clean_ns, bufopts)
+    vim.keymap.set('n', 'crdk', vim.lsp.buf.destructure_keys, bufopts)
+    vim.keymap.set('n', 'crtf', vim.lsp.buf.thread_first_all, bufopts)
+    vim.keymap.set('n', 'crtl', vim.lsp.buf.thread_last_all, bufopts)
+    vim.keymap.set('n', 'cruw', vim.lsp.buf.unwind_thread, bufopts)
+  end
+
+  -- formatting: https://neovim.io/doc/user/lsp.html#vim.lsp.buf.format()
+  vim.keymap.set('v', '<Leader>fs', function() 
+    vim.lsp.buf.format { 
+      -- restrict formatting to the clients attached only to the current buffer
+      bufnr = bufnr,
+      async = true, 
+      -- by default range is current selection in v-mode
+      --range = { 
+        --["start"] = vim.api.nvim_buf_get_mark(0, "<"),
+        --["end"] = vim.api.nvim_buf_get_mark(0, ">"),
+      --} 
+    }
+  end, bufopts)
+
+  -- format the whole file
+  vim.keymap.set('n', '<Leader>fa', function() vim.lsp.buf.format { async = false } end, bufopts)
+  vim.keymap.set('v', '<Leader>fa', function() vim.lsp.buf.format { async = false } end, bufopts)
+
+  --vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
+end
+
+-- lsps provide different completion results depending on the capabilities of
+-- the client. broadcast to the configured lsps that cmp-nvim has a bunch of
+-- capabilities not implemented by native nvim. 
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+capabilities.textDocument.formatting = true
+capabilities.textDocument.rangeFormatting = true
+capabilities.textDocument.range_formatting = true
+
+-- activate each LSP
+-- each LSP in this list needs to be manually installed via NPM/whatever
+local lspconfig = require('lspconfig')
+local util = require('lspconfig.util')
+local servers = { 
+  {'clojure_lsp', {
+    cmd = { "clojure-lsp" },
+    filetypes = { "clojure", "edn" },
+    root_dir = util.root_pattern("project.clj", "deps.edn", "build.boot", "shadow-cljs.edn", "bb.edn"),
+    settings = {
+      trace_level = verbose
+    }
+  }},
+  {'tsserver', {
+    filetypes = {'javascript', 'javascriptreact', 'typescript'}
+  }},
+  {'jsonls', {}},
+  {'eslint', {}},
+  {'tailwindcss', {}},
+}
+for _, lsp in pairs(servers) do
+  lspconfig[lsp[1]].setup {
+    on_attach = on_attach,
+    capabilites = capabilities,
+    -- for server-specific settings. see `:help lspconfig-setup`
+    -- note you cannot send settings as a function to an lsp server! we use this
+    -- settings object abstraction to prevent sending any baseline
+    -- configurations as functions (like root_dir, filetypes) to the settings
+    -- key: https://neovim.discourse.group/t/cannot-serialize-function-type-not-supported/4542/3
+    settings = (lsp[2] or {}).settings
+  }
+end
+
+-- order is important: 
+-- 1. get a hook to luasnip
+-- 2. configure cmp to use luasnip
+-- load snips as needed by filetype per the folder in the config dir
+local luasnip = require('luasnip')
+-- setup nvim-cmd and feed it LSPs and sources
+local cmp = require('cmp')
+cmp.setup {
+  -- if using luasnip, enable this
+  snippet = {
+    expand = function(args) 
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  mapping = {
+    -- use ctrl-l/h as the auto complete positional filler, with <tab> as the
+    -- confirmation, and ctrl-j/k as scrolling through the completion list. 
+    ["<Tab>"] = cmp.mapping.confirm {
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = true,
+    },
+    ["<C-j>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ["<C-k>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ["<C-l>"] = cmp.mapping(function(fallback)
+      if luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ["<C-h>"] = cmp.mapping(function(fallback)
+      if luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+  },
+  sources = {
+    -- to change priority of what shows up here, you can reorder these
+    -- also, limit when a suggestion window shows up based on key length
+    { name = 'nvim_lsp', keyword_length = 3 },
+    { name = 'luasnip', keyword_length = 2 },
+    { name = 'nvim_lsp_signature_help' },
+    { name = 'path' },
+  }
+}
+
+-- instead of lazy loading, we're just using a single luasnip.lua file
+--require('luasnip.loaders.from_lua').lazy_load({ lazy_paths = "~/.config/nvim/lua/snippets" })
+require('luasnip.loaders.from_snipmate').lazy_load({ lazy_paths = "~/.config/nvim/lua/snippets" })
+luasnip.setup {
+  -- allow jumping back into a snippet, even after you have exited the
+  -- template
+  history = true,
+  -- update dynamic snippets as you type
+  updateevents = "TextChanged,TextChangedI",
+}
+
+-- shortcut to reload snips 
+--vim.keymap.set('n', '<leader><leader>s', function() require('luasnip.loaders').reload_file('~/.config/nvim/lua/snippets')
 
 require('telescope').setup {
   defaults = {
@@ -92,6 +183,12 @@ require('telescope').setup {
       "public/js/",
       "public/dist/",
     },
+    path_display = {"truncate"}
+  },
+  pickers = {
+    lsp_references = {
+      path_display = {"truncate"}
+    }
   },
 }
 
@@ -105,9 +202,7 @@ require('nvim-treesitter.configs').setup {
     -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
     -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
     -- the name of the parser)
-    -- list of language that will be disabled
-    disable = { "c", "clojure" },
-    -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+    -- use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
     disable = function(lang, buf)
       local max_filesize = 100 * 1024 -- 100 KB
       local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
@@ -122,18 +217,6 @@ require('nvim-treesitter.configs').setup {
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
-  -- give other languages lisp-ey structural editing: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-  --textobjects = {
-    --swap = {
-      --enable = true,
-      --swap_next = {
-        --[">e"] = "@parameter.inner",
-      --},
-      --swap_previous = {
-        --["<e"] = "@parameter.inner",
-      --},
-    --},
-  --},
 }
 
 require('kitty-scrollback').setup {
@@ -323,12 +406,6 @@ vim.keymap.set('n', '<Leader>ds', function()
   local widgets = require('dap.ui.widgets')
   widgets.centered_float(widgets.scopes)
 end)
-
--- vim-clojure-static
-vim.g.clojure_fuzzy_indent_patterns = {
-    '^doto', '^with', '^def', '^let', 'go-loop', 'match', '^context', '^GET', '^PUT', '^POST', '^PATCH', '^DELETE', '^ANY', 'this-as', '^are', '^dofor', 'attempt-all', 'when-failed'
-}
-vim.g.clojure_align_multiline_strings = 1
 
 -- airline
 -- still render status if only 1 file is open

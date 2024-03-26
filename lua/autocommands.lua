@@ -1,33 +1,6 @@
 -- a place to organize autocmd
 --
 
--- the default floating window colors and other such highlights for coc
--- suggestions / docs are awful for some themes; fix that
---local function my_colors_setup()
-  --vim.cmd [[
-    --hi CocFloating ctermbg=DarkBlue
-    --hi CocHintFloat ctermbg=Green
-    --hi CocHintSign ctermbg=Green
-    --hi CocHintHighlight ctermbg=Green
-    --hi CocHintVirtualText ctermbg=Green
-    --hi CocWarningFloat ctermbg=Yellow
-    --hi CocWarningSign ctermbg=Yellow
-    --hi CocWarningHighlight ctermbg=Yellow
-    --hi CocWarningVirtualText ctermbg=Yellow
-    --hi CocErrorFloat ctermfg=DarkRed
-    --hi CocErrorSign ctermfg=DarkBlue
-    --hi CocErrorHighlight ctermfg=DarkRed
-    --hi CocErrorVirtualText ctermfg=DarkRed
-    --hi FgCocErrorFloatBgCocFloating ctermfg=Red
-  --]]
---end
---vim.api.nvim_create_augroup('colorscheme_coc_setup', { clear = true })
---vim.api.nvim_create_autocmd('VimEnter', {
-  --group = 'colorscheme_coc_setup',
-  --pattern = '*',
-  --callback = my_colors_setup
---})
-
 -- remove trailing whitespace, persist cursor position on save
 local function strip_trailing_whitespaces()
   local line = vim.fn.line('.')
@@ -44,7 +17,7 @@ vim.api.nvim_create_autocmd('BufReadPre', {
     callback = function() vim.opt_local.textwidth = 0 end,
 })
 
--- spellcheck readme, git commits
+-- spellcheck only readme, git commits
 vim.api.nvim_create_autocmd('FileType', {
     pattern = 'markdown',
     callback = function() vim.opt_local.spell = true end,
@@ -81,3 +54,5 @@ end
 vim.api.nvim_create_user_command('CljSortRequire', function(args)
     clj_sort_require_fn(args.args)
 end, { nargs = 1 })
+
+
