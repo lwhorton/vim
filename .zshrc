@@ -109,17 +109,21 @@ alias vim="nvim"
 alias sbbe="cd ~/dev/work/simbe_cloud"
 alias sbfe="cd ~/dev/work/simbe_web_clients"
 alias sbdo="cd ~/dev/work/simbe_cloud_docker"
-alias sbpx="~/dev/work/cloud-sql-proxy --port 5432 simbe-cloud:us-central1:simbe simbe-cloud:us-central1:heartbeats simbe-cloud:us-central1:simbe-etl simbe-cloud:us-central1:simbe-heartbeats"
+alias sbpx-older="~/dev/work/cloud-sql-proxy --port 5432 simbe-cloud:us-central1:simbe simbe-cloud:us-central1:heartbeats simbe-cloud:us-central1:simbe-etl simbe-cloud:us-central1:simbe-heartbeats"
+alias sbpx-old="~/dev/work/cloud-sql-proxy --port 5434 simbe-cloud:us-central1:simbe-etl simbe-cloud:us-central1:simbe-heartbeats"
+
+# ssh proxies, in this order: alloy, our 3 redis hosts (gcp, captures, telemetry)
+alias sbpx="ssh -i ~/.ssh/luke-horton-simberobotics-1 \
+  -N -L localhost:5432:10.38.50.28:5432 \
+  -L localhost:6379:10.38.49.28:6379 \
+  -L localhost:6380:10.38.49.4:6379 \
+  -L localhost:6381:10.38.49.12:6379 \
+  luke.horton@35.188.191.82 
+  "
 
 alias dc="docker compose"
 
 alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/luke/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/luke/Downloads/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/luke/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/luke/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
 # asdf + golang binaries. after using go get or go install, rerun `asdf reshim
 # golang`
@@ -177,3 +181,9 @@ color3=$(grep 'color3' $theme_conf | awk '{print $2}')
 # Define colors for prompt
 PROMPT='%F{$color2}$(date "+%m/%d %H:%M:%S")%f ${USER}@$(hostname -s | cut -c 1-8) %F{$color3}$(abbreviate_path)%f> '
 PS1=$PROMPT
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/luke/dev/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/luke/dev/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/luke/dev/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/luke/dev/google-cloud-sdk/completion.zsh.inc'; fi

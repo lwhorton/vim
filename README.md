@@ -52,7 +52,7 @@ git config --global rerere.enabled true
 ## snippets 
 
 we use luasnip and nvim-cmp for completion/snippets. snippets are stored under
-lua/snippets/{language-name}.snippets .
+lua/snippets/{language-name}.snippets.
 
 ## Get persistent undo's in different vim sessions
 
