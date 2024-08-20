@@ -3,7 +3,8 @@
 -- escape insert = jf or esc
 vim.api.nvim_set_keymap('i', 'jf', '<Esc>', { noremap = false })
 
--- <leader> is ','
+-- <leader> is ',' (this is technically set in init.lua as well, but we'll do it
+-- here for consistency of keybindings organization)
 vim.g.mapleader = ","
 vim.g.maplocalleader = ","
 

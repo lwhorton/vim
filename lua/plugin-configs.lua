@@ -71,12 +71,12 @@ local servers = {
       trace_level = verbose
     }
   }},
-  {'tsserver', {
-    filetypes = {'javascript', 'javascriptreact', 'typescript'}
-  }},
+  --{'tsserver', {
+    --filetypes = {'javascript', 'javascriptreact', 'typescript'}
+  --}},
   {'jsonls', {}},
   {'eslint', {}},
-  {'tailwindcss', {}},
+  --{'tailwindcss', {}},
 }
 for _, lsp in pairs(servers) do
   lspconfig[lsp[1]].setup {
@@ -229,183 +229,183 @@ require('kitty-scrollback').setup {
 
 -- setup debugger in node
 -- this dap-vscode-js is a wrapper around the shitty vscode-js-debug
-require('dap-vscode-js').setup({
-  --node_path = "/Users/luke/.asdf/shims/node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
-  -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
-  -- Path to vscode-js-debug installation.
-  debugger_path = vim.fn.resolve(vim.fn.stdpath('data') .. "/lazy/vscode-js-debug"),
-  adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
-  -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
-  -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
-  -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
-  -- })
-})
-
-for _, language in ipairs({ "typescript", "javascript" }) do
-  require("dap").configurations[language] = {
-    --https://github.com/microsoft/vscode-js-debug/blob/main/OPTIONS.md
-    --https://miguelcrespo.co/posts/debugging-javascript-applications-with-neovim/
-    --https://github.com/anasrar/.dotfiles/blob/4c444c3ab2986db6ca7e2a47068222e47fd232e2/neovim/.config/nvim/lua/rin/DAP/languages/typescript.lua
-    {
-      -- https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps
-      type = 'pwa-node',
-      request = 'attach',
-      name = 'Attach automatically',
-      cwd = vim.fn.getcwd(),
-      autoAttachChildProcesses = true,
-      attachExistingChildren = true,
-      continueOnAttach = false,
-      --protocol = 'inspector',
-      -- node --inspect defaults
-      --hostname = '127.0.0.1',
-      --port = 9222,
-      --
-      outputCapture = 'console', -- or 'std'
-      trace = true,
-      --console = 'externalTerminal',
-      sourceMaps = false,
-      resolveSourceMapLocations = {
-        "${workspaceFolder}/**",
-        "!**/node_modules/**",
-      },
-      skipFiles = { 
-        '<node_internals>/**',
-        "${workspaceFolder}/node_modules/**",
-      },
-      --restart = {
-        --delay = 1,
-        --maxAttempts = 10,
-      --},
-    },
-    {
-      type = "pwa-node",
-      request = "attach",
-      name = "Attach manually",
-      cwd = vim.fn.getcwd(),
-      processId = require'dap.utils'.pick_process,
-      autoAttachChildProcesses = true,
-      attachExistingChildren = true,
-      continueOnAttach = false,
-      resolveSourceMapLocations = {
-        "${workspaceFolder}/**",
-        "!**/node_modules/**",
-      },
-      --skipFiles = { '**/node_modules/**' },
-    },
-    {
-      type = "pwa-node",
-      request = "attach",
-      name = "Attach manually at a non-default inspector",
-      processId = require'dap.utils'.pick_process,
-      port = function()
-        local co = coroutine.running()
-        return coroutine.create(function()
-          vim.ui.input({
-            prompt = "Enter port: ",
-          }, function(port)
-            if port == nil or port == "" then
-              return
-            else
-              coroutine.resume(co, port)
-            end
-          end)
-        end)
-      end,
-      hostname = function()
-        local co = coroutine.running()
-        return coroutine.create(function()
-          vim.ui.input({
-            prompt = "Enter hostname: ",
-            default = "127.0.0.1",
-          }, function(hostname)
-            if hostname == nil or hostname == "" then
-              return
-            else
-              coroutine.resume(co, hostname)
-            end
-          end)
-        end)
-      end,
-    },
-
-    --{
-      --type = "pwa-node",
-      --request = "launch",
-      --name = "Launch current file",
-      --program = "${file}",
-      --cwd = vim.fn.getcwd(),
-      --sourceMaps = true,
-      --skipFiles = { '**/node_modules/**' },
-    --},
-    ---- TODO:debug via chrome (client side)
-    --{
-      --type = "pwa-chrome",
-      --request = "launch",
-      --name = "Launch & debug with chrome (arc?) devtools inspector",
-      --skipFiles = { '**/node_modules/**' },
-      --url = function()
-        --local co = coroutine.running()
-        --return coroutine.create(function()
-          --vim.ui.input({
-            --prompt = "Enter URL: ",
-            --default = "http://localhost:8080",
-          --}, function(url)
-            --if url == nil or url == "" then
-              --return
-            --else
-              --coroutine.resume(co, url)
-            --end
-          --end)
-        --end)
-      --end,
-      --webRoot = vim.fn.getcwd(),
-      --protocol = "inspector",
-      --sourceMaps = true,
-      --userDataDir = false,
-    --},
-  }
-end
-
--- automatically toggle the dap-ui on attach 
-local dap, dapui = require("dap"), require("dapui")
-dap.set_log_level('TRACE')
-dap.listeners.before.attach.dapui_config = function()
-  dapui.open()
-end
-dap.listeners.before.launch.dapui_config = function()
-  dapui.open()
-end
-dap.listeners.before.event_terminated.dapui_config = function()
-  dapui.close()
-end
-dap.listeners.before.event_exited.dapui_config = function()
-  dapui.close()
-end
-
--- keymaps for dap debugging
-vim.keymap.set('n', '<Leader>dj', function() require('dap').step_over() end)
-vim.keymap.set('n', '<Leader>dl', function() require('dap').step_into() end)
-vim.keymap.set('n', '<Leader>dk', function() require('dap').continue() end)
-vim.keymap.set('n', '<Leader>dh', function() require('dap').step_out() end)
-vim.keymap.set('n', '<Leader>dc', function() require('dap').run_to_cursor() end)
-vim.keymap.set('n', '<Leader>db', function() require('dap').toggle_breakpoint() end)
-vim.keymap.set('n', '<Leader>da', function() require('dap').continue({ before = get_args }) end)
-vim.keymap.set('n', '<Leader>dq', function() require('dap').disconnect() end)
-vim.keymap.set('n', '<Leader>dQ', function() require('dapui').close() end)
-vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
-vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
-vim.keymap.set('n', '<Leader>dp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
-vim.keymap.set({'n', 'v'}, '<Leader>dp', function()
-  require('dap.ui.widgets').preview()
-end)
-vim.keymap.set('n', '<Leader>df', function()
-  local widgets = require('dap.ui.widgets')
-  widgets.centered_float(widgets.frames)
-end)
-vim.keymap.set('n', '<Leader>ds', function()
-  local widgets = require('dap.ui.widgets')
-  widgets.centered_float(widgets.scopes)
-end)
+--require('dap-vscode-js').setup({
+--  --node_path = "/Users/luke/.asdf/shims/node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
+--  -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+--  -- Path to vscode-js-debug installation.
+--  debugger_path = vim.fn.resolve(vim.fn.stdpath('data') .. "/lazy/vscode-js-debug"),
+--  adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
+--  -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
+--  -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
+--  -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
+--  -- })
+--})
+--
+--for _, language in ipairs({ "typescript", "javascript" }) do
+--  require("dap").configurations[language] = {
+--    --https://github.com/microsoft/vscode-js-debug/blob/main/OPTIONS.md
+--    --https://miguelcrespo.co/posts/debugging-javascript-applications-with-neovim/
+--    --https://github.com/anasrar/.dotfiles/blob/4c444c3ab2986db6ca7e2a47068222e47fd232e2/neovim/.config/nvim/lua/rin/DAP/languages/typescript.lua
+--    {
+--      -- https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps
+--      type = 'pwa-node',
+--      request = 'attach',
+--      name = 'Attach automatically',
+--      cwd = vim.fn.getcwd(),
+--      autoAttachChildProcesses = true,
+--      attachExistingChildren = true,
+--      continueOnAttach = false,
+--      --protocol = 'inspector',
+--      -- node --inspect defaults
+--      --hostname = '127.0.0.1',
+--      --port = 9222,
+--      --
+--      outputCapture = 'console', -- or 'std'
+--      trace = true,
+--      --console = 'externalTerminal',
+--      sourceMaps = false,
+--      resolveSourceMapLocations = {
+--        "${workspaceFolder}/**",
+--        "!**/node_modules/**",
+--      },
+--      skipFiles = { 
+--        '<node_internals>/**',
+--        "${workspaceFolder}/node_modules/**",
+--      },
+--      --restart = {
+--        --delay = 1,
+--        --maxAttempts = 10,
+--      --},
+--    },
+--    {
+--      type = "pwa-node",
+--      request = "attach",
+--      name = "Attach manually",
+--      cwd = vim.fn.getcwd(),
+--      processId = require'dap.utils'.pick_process,
+--      autoAttachChildProcesses = true,
+--      attachExistingChildren = true,
+--      continueOnAttach = false,
+--      resolveSourceMapLocations = {
+--        "${workspaceFolder}/**",
+--        "!**/node_modules/**",
+--      },
+--      --skipFiles = { '**/node_modules/**' },
+--    },
+--    {
+--      type = "pwa-node",
+--      request = "attach",
+--      name = "Attach manually at a non-default inspector",
+--      processId = require'dap.utils'.pick_process,
+--      port = function()
+--        local co = coroutine.running()
+--        return coroutine.create(function()
+--          vim.ui.input({
+--            prompt = "Enter port: ",
+--          }, function(port)
+--            if port == nil or port == "" then
+--              return
+--            else
+--              coroutine.resume(co, port)
+--            end
+--          end)
+--        end)
+--      end,
+--      hostname = function()
+--        local co = coroutine.running()
+--        return coroutine.create(function()
+--          vim.ui.input({
+--            prompt = "Enter hostname: ",
+--            default = "127.0.0.1",
+--          }, function(hostname)
+--            if hostname == nil or hostname == "" then
+--              return
+--            else
+--              coroutine.resume(co, hostname)
+--            end
+--          end)
+--        end)
+--      end,
+--    },
+--
+--    --{
+--      --type = "pwa-node",
+--      --request = "launch",
+--      --name = "Launch current file",
+--      --program = "${file}",
+--      --cwd = vim.fn.getcwd(),
+--      --sourceMaps = true,
+--      --skipFiles = { '**/node_modules/**' },
+--    --},
+--    ---- TODO:debug via chrome (client side)
+--    --{
+--      --type = "pwa-chrome",
+--      --request = "launch",
+--      --name = "Launch & debug with chrome (arc?) devtools inspector",
+--      --skipFiles = { '**/node_modules/**' },
+--      --url = function()
+--        --local co = coroutine.running()
+--        --return coroutine.create(function()
+--          --vim.ui.input({
+--            --prompt = "Enter URL: ",
+--            --default = "http://localhost:8080",
+--          --}, function(url)
+--            --if url == nil or url == "" then
+--              --return
+--            --else
+--              --coroutine.resume(co, url)
+--            --end
+--          --end)
+--        --end)
+--      --end,
+--      --webRoot = vim.fn.getcwd(),
+--      --protocol = "inspector",
+--      --sourceMaps = true,
+--      --userDataDir = false,
+--    --},
+--  }
+--end
+--
+---- automatically toggle the dap-ui on attach 
+--local dap, dapui = require("dap"), require("dapui")
+--dap.set_log_level('TRACE')
+--dap.listeners.before.attach.dapui_config = function()
+--  dapui.open()
+--end
+--dap.listeners.before.launch.dapui_config = function()
+--  dapui.open()
+--end
+--dap.listeners.before.event_terminated.dapui_config = function()
+--  dapui.close()
+--end
+--dap.listeners.before.event_exited.dapui_config = function()
+--  dapui.close()
+--end
+--
+---- keymaps for dap debugging
+--vim.keymap.set('n', '<Leader>dj', function() require('dap').step_over() end)
+--vim.keymap.set('n', '<Leader>dl', function() require('dap').step_into() end)
+--vim.keymap.set('n', '<Leader>dk', function() require('dap').continue() end)
+--vim.keymap.set('n', '<Leader>dh', function() require('dap').step_out() end)
+--vim.keymap.set('n', '<Leader>dc', function() require('dap').run_to_cursor() end)
+--vim.keymap.set('n', '<Leader>db', function() require('dap').toggle_breakpoint() end)
+--vim.keymap.set('n', '<Leader>da', function() require('dap').continue({ before = get_args }) end)
+--vim.keymap.set('n', '<Leader>dq', function() require('dap').disconnect() end)
+--vim.keymap.set('n', '<Leader>dQ', function() require('dapui').close() end)
+--vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
+--vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
+--vim.keymap.set('n', '<Leader>dp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+--vim.keymap.set({'n', 'v'}, '<Leader>dp', function()
+--  require('dap.ui.widgets').preview()
+--end)
+--vim.keymap.set('n', '<Leader>df', function()
+--  local widgets = require('dap.ui.widgets')
+--  widgets.centered_float(widgets.frames)
+--end)
+--vim.keymap.set('n', '<Leader>ds', function()
+--  local widgets = require('dap.ui.widgets')
+--  widgets.centered_float(widgets.scopes)
+--end)
 
 -- airline
 -- still render status if only 1 file is open

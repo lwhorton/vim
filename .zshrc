@@ -70,9 +70,10 @@ ZSH_THEME="zhann"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+
+# this must happen before plugin installation
 plugins=(
   git
-  asdf
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -95,16 +96,28 @@ LESS=FRSX
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-alias vim="nvim"
+# init homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
+# init direnv
+#eval "$(direnv hook zsh)"
+
+# init fzf
+. <(fzf --zsh)
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/luke/dev/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/luke/dev/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/luke/dev/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/luke/dev/google-cloud-sdk/completion.zsh.inc'; fi
+
+## generic aliases
+alias vim="nvim"
+alias dc="docker compose"
+alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+
+## work aliases
 # simbe
 alias sbbe="cd ~/dev/work/simbe_cloud"
 alias sbfe="cd ~/dev/work/simbe_web_clients"
@@ -120,20 +133,6 @@ alias sbpx="ssh -i ~/.ssh/luke-horton-simberobotics-1 \
   -L localhost:6381:10.38.49.12:6379 \
   luke.horton@35.188.191.82 
   "
-
-alias dc="docker compose"
-
-alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
-
-# asdf + golang binaries. after using go get or go install, rerun `asdf reshim
-# golang`
-. ~/.asdf/plugins/golang/set-env.zsh
-
-# direnv
-eval "$(direnv hook zsh)"
-
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
-export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
 
 # summarize parent directories if necessary
 abbreviate_path() {
@@ -168,7 +167,7 @@ abbreviate_path() {
 #PROMPT='[%T] $(summarize_directories)$ '
 
 # use kitty's theme to color the prompt
-theme_conf="$HOME/.config/kitty/current-theme.conf"
+theme_conf="$HOME/.config/kitty/Gruvbox Dark.conf"
 
 # Extract colors
 foreground_color=$(grep 'foreground' $theme_conf | awk '{print $2}')
@@ -182,8 +181,5 @@ color3=$(grep 'color3' $theme_conf | awk '{print $2}')
 PROMPT='%F{$color2}$(date "+%m/%d %H:%M:%S")%f ${USER}@$(hostname -s | cut -c 1-8) %F{$color3}$(abbreviate_path)%f> '
 PS1=$PROMPT
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/luke/dev/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/luke/dev/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/luke/dev/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/luke/dev/google-cloud-sdk/completion.zsh.inc'; fi
+# enable zsh syntax highlighting
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

@@ -1,39 +1,64 @@
 # New dev environment setup
 
+It's a little chicken and the egg with zsh, .zshrc, and some of our deps (brew,
+asdf, etc.). You might have to deal with errors while installing all these deps.
+
 - attempt to git clone this repo, which should prompt to install xcode tools
-- install brew
-- install kitty
-- install profile for kitty.conf `ln -s ~/.vim/vim/kitty.conf ~/.config/kitty/`
-- install profile for .zshrc `ln -s ~/.vim/vim/.zshrc ~/.zshrc`
-- install nvim lua configs:
+	- if the prompt does not happen, manually run `xcode-select --install`
+- install kitty (from binary source)
+- make a bunch of config dirs that we will need shortly
+    ```sh
+    mkdir -p ~/.config/nvim 
+    mkdir -p ~/.config/kitty
+    mkdir -p ~/.config/nvim/undo
+    ```
+- install the profile for kitty via its conf: `ln -s {path_to/vim/}kitty.conf ~/.config/kitty/`
+- restart kitty
+- install [brew](https://brew.sh)
+- install [ohmyzsh](https://ohmyz.sh/#install) 
+- install neovim `brew install neovim`
+- install .zshrc `ln -s {path_to/vim/}.zshrc ~/.zshrc`
+- install nvim configs:
 
 ```
-ln -s ~/.vim/vim/init.lua ~/.config/nvim/init.lua
-ln -s ~/.vim/vim/lua ~/.config/nvim/lua
-ln -s ~/.vim/vim/colors ~/.config/nvim/colors
-mkdir -p ~/.config/nvim/undo
+ln -s {path_to/vim/}init.lua ~/.config/nvim/init.lua
+ln -s {path_to/vim/}lua ~/.config/nvim/lua
+ln -s {path_to/vim/}colors ~/.config/nvim/colors
 ```
 
-- install nvim, then setup initialization properly https://neovim.io/doc/user/nvim.html#nvim-from-vim
-- install ohmyzsh, and [zsh-dircolors](https://github.com/joel-porquet/zsh-dircolors-solarized)
-- install with brew:
+- install deps with brew:
 
     fzf
     rg
     ack
     asdf
 
-- install powerline `git clone https://github.com/powerline/fonts.git --depth=1e`
+- install powerline (to ~/dev/me, probably) `git clone https://github.com/powerline/fonts.git --depth=1`
 - install zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
-- opening vim should trigger lazy.nvim to install a bunch of plugins. some
-  plugins have follow up steps, read those in the nvim/lua/plugin-configs.lua.
+- opening vim for the first time should trigger lazy.nvim to install a bunch of
+plugins. some plugins have follow up steps, read those in the
+nvim/lua/plugin-configs.lua. 
+    - :TSInstall all
 - generate an ssh key and add it to github (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 
 ## colors
 
-https://sw.kovidgoyal.net/kitty/remote-control/#kitten-set-colors
+there are layers to colors.
 
-`$ kitty @ set-colors ~/.vim/vim/kitty.neosolarized-dark.conf`
+1. for zsh, we _try_ to simply utilize whatever color scheme kitty has
+   configured.
+
+2. for kitty, you can manually setup colors, if you have the conf file, via
+   `set-colors`. alternatively, you can run `kitten themes` and pick a color,
+then set (inside .zshrc) `them_conf="$HOME/.config/kitty/{theme}.conf`. then set
+~/.config/nvim/lua/plugins.lua:vim.cmd.colorscheme('...theme') for now, it's
+gruvbox dark across the board.
+
+https://sw.kovidgoyal.net/kitty/remote-control/#kitten-set-colors
+`$ kitty @ set-colors ~/dev/me/vim/kitty.neosolarized-dark.conf`
+
+3. for our code itself (neovim syntax highlighting, basically), we set our theme
+   in 'plugins.lua'. it's hard being so cool.
 
 ## Reasonable git aliases
 
@@ -54,13 +79,10 @@ git config --global rerere.enabled true
 we use luasnip and nvim-cmp for completion/snippets. snippets are stored under
 lua/snippets/{language-name}.snippets.
 
-## Get persistent undo's in different vim sessions
-
-```bash
-mkdir ~/.vim/undo
-```
-
 ## LSP
+
+in general, we probably need tsserver installed for most things, even though
+nobody wants node on their system.
 
 ### elixir
 

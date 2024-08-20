@@ -20,7 +20,6 @@ return {
   end 
   },
 
-
   -- https://github.com/knubie/vim-kitty-navigator
   -- make sure to copy the two py files after install: run cp ./*.py ~/.config/kitty/
   {'knubie/vim-kitty-navigator', lazy = false, },
@@ -163,16 +162,16 @@ return {
     'microsoft/vscode-js-debug',
     build = 'npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out'
   },
-  {'mxsdev/nvim-dap-vscode-js',
-    dependencies = {'mfussenegger/nvim-dap', 'microsoft/vscode-js-debug'},
-  },
-  { "rcarriga/nvim-dap-ui", 
-    dependencies = {"mfussenegger/nvim-dap"},
-    config = function()
-      -- this has to happen before anything else in dapui
-      require('dapui').setup()
-    end
-  },
+--  {'mxsdev/nvim-dap-vscode-js',
+--    dependencies = {'mfussenegger/nvim-dap', 'microsoft/vscode-js-debug'},
+--  },
+--  { "rcarriga/nvim-dap-ui", 
+--    dependencies = {"mfussenegger/nvim-dap"},
+--    config = function()
+--      -- this has to happen before anything else in dapui
+--      require('dapui').setup()
+--    end
+--  },
 }
 
 
