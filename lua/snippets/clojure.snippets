@@ -1,3 +1,28 @@
 snippet cs "class"
 	{:class (css ${0})}
 
+snippet cpp "clojure pretty print"
+	(clojure.pprint/pprint {${0}})
+
+snippet com "clojure comment"
+	(comment 
+	  ${0})
+
+snippet ctrtv "clojure test var"
+	(clojure.test/run-test-var #'${0})
+
+snippet ctrt "clojure run tests"
+	(clojure.test/run-tests ${0}*ns*)
+
+snippet dquery "suntribe datomic query"
+	(d/q {:query '{:find [(pull ?e [*])]
+								 :in [$]
+								 :where [[?e ${0} _]]}
+				:args [(d/db (:datomic/connection @user/sysref))]})
+
+snippet dpull "suntribe datomic pull"
+	(d/pull (d/db (:datomic/connection @user/sysref)) '[*] 'eid)
+
+snippet ddb "suntribe db"
+	(d/db (:datomic/connection @user/sysref))
+

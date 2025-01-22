@@ -29,6 +29,7 @@ local on_attach = function(client, bufnr)
   end
 
   -- formatting: https://neovim.io/doc/user/lsp.html#vim.lsp.buf.format()
+  -- format the selection
   vim.keymap.set('v', '<Leader>fs', function() 
     vim.lsp.buf.format { 
       -- restrict formatting to the clients attached only to the current buffer
@@ -406,20 +407,6 @@ require('kitty-scrollback').setup {
 --  local widgets = require('dap.ui.widgets')
 --  widgets.centered_float(widgets.scopes)
 --end)
-
--- airline
--- still render status if only 1 file is open
-vim.opt.laststatus = 2
-vim.g.airline_section_a = vim.fn['airline#section#create_left']({'mode'})
-vim.g.airline_section_b = '%-0.30{getcwd()}'
-vim.g.airline_section_c = '%t'
-vim.g.airline_section_gutter = ''
-vim.g.airline_section_x = ''
-vim.g.airline_section_y = ''
-vim.g.airline_section_z = vim.fn['airline#section#create_right']({'%3p%%', '%l/%L'})
-vim.g['airline#extensions#tabline#fnamemod'] = ':t'
-vim.g['airline#extensions#branch#enabled'] = 0
-vim.g['airline#extensions#tabline#fnamecollapse'] = 0
 
 -- disable auto-insert / auto-delete mode for clojure expressions
 vim.g.sexp_enable_insert_mode_mappings = 0

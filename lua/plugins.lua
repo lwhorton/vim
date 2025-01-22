@@ -42,14 +42,31 @@ return {
   -- luasnip needs a completion source
   { 'saadparwaiz1/cmp_luasnip' },
 
-  -- repl with auto-connect, :Console :FireplaceConnect 
-  { 'tpope/vim-fireplace' },
-  { 'tpope/vim-salve'},
+  -- repl! https://github.com/Olical/conjure/wiki/Quick-start:-Clojure
+  {
+    "Olical/conjure",
+    ft = { "clojure", "fennel", "python" }, -- etc
+    lazy = true,
+    init = function()
+      -- Set configuration options here
+      -- Uncomment this to get verbose logging to help diagnose internal Conjure issues
+      -- This is VERY helpful when reporting an issue with the project
+      -- vim.g["conjure#debug"] = true
+    end,
 
-  -- file status bar
-  {'vim-airline/vim-airline' },
-  {'vim-airline/vim-airline-themes' },
-
+    -- Optional cmp-conjure integration (currently using cmp-nvim-lsp)
+    --dependencies = { "PaterJason/cmp-conjure" },
+  },
+  --{
+    --"PaterJason/cmp-conjure",
+    --lazy = true,
+    --config = function()
+      --local cmp = require("cmp")
+      --local config = cmp.get_config()
+      --table.insert(config.sources, { name = "conjure" })
+      --return cmp.setup(config)
+    --end,
+  --},
 
   -- count the search results
   { 'google/vim-searchindex' },
@@ -111,6 +128,21 @@ return {
     vim.cmd [[ TSUpdate ]]
   end},
 
+  -- status bar on the bottom
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    options = { theme = 'gruvbox' },
+    sections = {
+      lualine_a = { 'mode' },
+      lualine_b = {},
+      lualine_c = {'filename'},
+      lualine_x = {'encoding', 'fileformat', 'filetype'},
+      lualine_y = {'progress'},
+      lualine_z = {'location'},
+    },
+  },
+
   -- auto insert matching \{ \[ \( etc.
   { 'cohama/lexima.vim' },
 
@@ -136,11 +168,23 @@ return {
 
 
   -- preview markdown files in a browser
+    -- avoid node 
+  --{
+    --'iamcco/markdown-preview.nvim',
+    --cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    --ft = { 'markdown' },
+    --build = function() vim.fn["mkdp#util#install"]() end,
+  --},
+
+    -- use node
   {
-    'iamcco/markdown-preview.nvim',
-    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
-    ft = { 'markdown' },
-    build = function() vim.fn["mkdp#util#install"]() end,
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    build = "cd app && npm install",
+    init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
+    end,
+    ft = { "markdown" },
   },
 
   {

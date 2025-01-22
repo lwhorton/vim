@@ -58,6 +58,7 @@ vim.api.nvim_set_keymap('n', '<C-y>', ':Yanks<CR>', { noremap = true  })
 
 -- search across file/symbols/buffers/tags with rip-grep, using FZF's syntax and window
 vim.api.nvim_set_keymap('n', '<C-s>', '<cmd>Telescope live_grep<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-d>', '<cmd>Telescope grep_string<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-p>', '<cmd>Telescope find_files<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-r>', '<cmd>Telescope resume<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<CR>', { noremap = true, silent = true })
@@ -67,6 +68,9 @@ vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<CR>', { nor
 vim.api.nvim_set_keymap('n', '*', '*``', { noremap = true, silent = true })
 -- after searching, hit return again (command mode) to clear highlights
 vim.api.nvim_set_keymap('n', '<CR>', ':noh<CR><CR>', { noremap = true, silent = true })
+
+-- conjure repl mappings to be more like vim fireplace (instead of <leader>, use 'c')
+vim.g['conjure#mapping#prefix'] = 'c'
 
 -- lsp shortcuts
 

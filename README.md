@@ -33,7 +33,6 @@ ln -s {path_to/vim/}colors ~/.config/nvim/colors
     ack
     asdf
 
-- install powerline (to ~/dev/me, probably) `git clone https://github.com/powerline/fonts.git --depth=1`
 - install zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
 - opening vim for the first time should trigger lazy.nvim to install a bunch of
 plugins. some plugins have follow up steps, read those in the

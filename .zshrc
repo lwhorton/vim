@@ -101,7 +101,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # init direnv
-#eval "$(direnv hook zsh)"
+eval "$(direnv hook zsh)"
 
 # init fzf
 . <(fzf --zsh)
@@ -116,6 +116,60 @@ if [ -f '/Users/luke/dev/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/
 alias vim="nvim"
 alias dc="docker compose"
 alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+
+# git aliases
+git_prune_merged() {
+  # $1 = days old, defaulting to 30
+  local DAYS_OLD=30
+  local DRY_RUN=true
+  for arg in "$@"; do
+    case $arg in 
+      --days-old=*)
+        DAYS_OLD="${arg#*=}"
+        shift
+        ;;
+      --delete)
+        DRY_RUN=false
+        shift
+        ;;
+      *)
+        echo "Unknown argument: $arg"
+        return 1
+        ;;
+    esac
+  done
+
+  git checkout -q main || { echo "main branch doesnt exist?" ; exit 1; }
+
+  # macos
+  local cutoff=$(date -v-"$DAYS_OLD"d +%s)
+  local merged_branches=$(git branch --merged main | sed 's/^..//')
+  local branches_to_delete=()
+  git for-each-ref refs/heads/ "--format=%(refname:short) %(committerdate:unix)" | while read branch last_commit; do
+    # skip these branches
+    if [ "$branch" = "main" ]; then
+      continue
+    fi
+
+    echo "Considering $branch ..."
+
+    if [ "$last_commit" -lt "$cutoff" ]; then
+      if echo "$merged_branches" | grep -q "^$branch$"; then
+        branches_to_delete+=("$branch")
+      fi
+    fi
+  done
+
+  if [ "$DRY_RUN" = true ]; then
+    echo "Dry run: The following branches would be deleted:"
+    echo "${branches_to_delete[@]}"
+  else
+    echo "Deleting the following branches:"
+    echo "${branches_to_delete[@]}"
+    git branch -D "${branches_to_delete[@]}"
+  fi
+}
+alias git-prune-merged='git_prune_merged'
 
 ## work aliases
 # simbe
@@ -133,6 +187,7 @@ alias sbpx="ssh -i ~/.ssh/luke-horton-simberobotics-1 \
   -L localhost:6381:10.38.49.12:6379 \
   luke.horton@35.188.191.82 
   "
+
 
 # summarize parent directories if necessary
 abbreviate_path() {
@@ -183,3 +238,9 @@ PS1=$PROMPT
 
 # enable zsh syntax highlighting
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# enable mise version management (like asdf, but better)
+eval "$(/Users/luke/.local/bin/mise activate zsh)"
+
+# configure GPG keys
+export GPG_TTY=$(tty)
