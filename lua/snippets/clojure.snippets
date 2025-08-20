@@ -4,6 +4,12 @@ snippet cs "class"
 snippet cpp "clojure pretty print"
 	(clojure.pprint/pprint {${0}})
 
+snippet tp "tap>"
+	(user/tap-> {${0}})
+
+#snippet tp "tap>"
+#	(tap> {${0}})
+
 snippet com "clojure comment"
 	(comment 
 	  ${0})
@@ -21,8 +27,11 @@ snippet dquery "suntribe datomic query"
 				:args [(d/db (:datomic/connection @user/sysref))]})
 
 snippet dpull "suntribe datomic pull"
-	(d/pull (d/db (:datomic/connection @user/sysref)) '[*] 'eid)
+	(d/pull (d/db (:datomic/connection @user/sysref)) '[*] ${0})
 
 snippet ddb "suntribe db"
 	(d/db (:datomic/connection @user/sysref))
+
+snippet gos "suntribe start development stage w/ local server"
+	${0}(user/go! :development :server)
 

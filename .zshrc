@@ -162,7 +162,9 @@ git_prune_merged() {
 
   if [ "$DRY_RUN" = true ]; then
     echo "Dry run: The following branches would be deleted:"
-    echo "${branches_to_delete[@]}"
+    for branch in "${branches_to_delete[@]}"; do
+      echo "${branch}"
+    done
   else
     echo "Deleting the following branches:"
     echo "${branches_to_delete[@]}"
@@ -188,6 +190,8 @@ alias sbpx="ssh -i ~/.ssh/luke-horton-simberobotics-1 \
   luke.horton@35.188.191.82 
   "
 
+## suntribe
+alias recbus="cd ~/dev/work/recbus"
 
 # summarize parent directories if necessary
 abbreviate_path() {
@@ -244,3 +248,4 @@ eval "$(/Users/luke/.local/bin/mise activate zsh)"
 
 # configure GPG keys
 export GPG_TTY=$(tty)
+alias gpgup="gpgconf --kill gpg-agent; gpgconf --launch gpg-agent"

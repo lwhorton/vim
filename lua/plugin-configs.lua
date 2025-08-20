@@ -18,7 +18,23 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', 'crrn', vim.lsp.buf.rename, bufopts)
   vim.keymap.set('n', 'crca', vim.lsp.buf.code_action, bufopts)
 
-  -- clojure specific awesomeness: https://clojure-lsp.io/features/#clojure-lsp-extra-commands
+  -- using conjure as the repl, setup some better defaults
+  vim.g["conjure#log#hud#anchor"] = "SE"
+  vim.g["conjure#log#hud#width"] = 1.0 -- 0.42
+  vim.g["conjure#log#hud#height"] = 0.2 -- 0.3
+  vim.g["conjure#log#trim#at"] = 5000
+  vim.g["conjure#log#wrap"] = false
+  vim.g["conjure#extract#tree_sitter#enabled"] = false
+  vim.g["conjure#extract#context_header_lines"] = 100 -- 24
+  vim.g["conjure#client#clojure#nrepl#eval#raw_out"] = true
+  vim.g["conjure#client#clojure#nrepl#test#raw_out"] = true
+  vim.g["conjure#client#clojure#nrepl#eval#print_options#length"] = 100
+  vim.g["conjure#client#clojure#nrepl#eval#print_options#right_margin"] = 128
+
+  -- kill evaluating clojure via conjure
+  --TODO vim.keymap.set('n', 'ckk', vim.lsp.buf.code_action, bufopts)
+
+  -- clojure specific awclojure.esomeness: https://clojure-lsp.io/features/#clojure-lsp-extra-commands
   if client.name == "clojure" then
     vim.keymap.set('n', 'cram', vim.lsp.buf.add_missing_libspec, bufopts)
     vim.keymap.set('n', 'crcn', vim.lsp.buf.clean_ns, bufopts)
@@ -46,6 +62,10 @@ local on_attach = function(client, bufnr)
   -- format the whole file
   vim.keymap.set('n', '<Leader>fa', function() vim.lsp.buf.format { async = false } end, bufopts)
   vim.keymap.set('v', '<Leader>fa', function() vim.lsp.buf.format { async = false } end, bufopts)
+
+  -- align the selected text (EasyAlign) in visual mode
+  vim.keymap.set('x', '<Leader>ft', '<Plug>(EasyAlign)')
+  vim.keymap.set('n', '<Leader>ft', '<Plug>(EasyAlign)')
 
   --vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
 end

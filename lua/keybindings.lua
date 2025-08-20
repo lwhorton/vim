@@ -3,11 +3,6 @@
 -- escape insert = jf or esc
 vim.api.nvim_set_keymap('i', 'jf', '<Esc>', { noremap = false })
 
--- <leader> is ',' (this is technically set in init.lua as well, but we'll do it
--- here for consistency of keybindings organization)
-vim.g.mapleader = ","
-vim.g.maplocalleader = ","
-
 -- <CR> inserts newline without entering insert mode
 vim.api.nvim_set_keymap('n', '<CR>', 'o<Esc>', { noremap = false })
 
@@ -64,13 +59,20 @@ vim.api.nvim_set_keymap('n', '<C-r>', '<cmd>Telescope resume<CR>', { noremap = t
 vim.api.nvim_set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<CR>', { noremap = true, silent = true })
 
--- highlight words without jumping the cursor randomly
-vim.api.nvim_set_keymap('n', '*', '*``', { noremap = true, silent = true })
+-- search for whole word under cursor (like `*`), but don't move cursor
+vim.keymap.set("n", "*", function()
+  vim.fn.setreg("/", "\\<" .. vim.fn.expand("<cword>") .. "\\>")
+  vim.opt.hlsearch = true
+end, { desc = "Search word under cursor (no move, whole word)" })
+
+-- search for partial match under cursor (like `g*`), but don't move cursor
+vim.keymap.set("n", "g*", function()
+  vim.fn.setreg("/", vim.fn.expand("<cword>"))
+  vim.opt.hlsearch = true
+end, { desc = "Search word under cursor (no move, partial match)" })
+
 -- after searching, hit return again (command mode) to clear highlights
 vim.api.nvim_set_keymap('n', '<CR>', ':noh<CR><CR>', { noremap = true, silent = true })
-
--- conjure repl mappings to be more like vim fireplace (instead of <leader>, use 'c')
-vim.g['conjure#mapping#prefix'] = 'c'
 
 -- lsp shortcuts
 
