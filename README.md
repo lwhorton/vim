@@ -32,6 +32,7 @@ ln -s {path_to/vim/}colors ~/.config/nvim/colors
     rg
     ack
     asdf
+    par
 
 - install zsh-syntax (https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
 - opening vim for the first time should trigger lazy.nvim to install a bunch of

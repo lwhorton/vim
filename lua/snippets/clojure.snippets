@@ -4,6 +4,9 @@ snippet cs "class"
 snippet cpp "clojure pretty print"
 	(clojure.pprint/pprint {${0}})
 
+snippet cpt "clojure pretty print table"
+	(clojure.pprint/print-table ${0})
+
 snippet tp "tap>"
 	(user/tap-> {${0}})
 
@@ -26,8 +29,34 @@ snippet dquery "suntribe datomic query"
 								 :where [[?e ${0} _]]}
 				:args [(d/db (:datomic/connection @user/sysref))]})
 
+snippet dqh "suntribe datomic query and hydrate"
+  (let [$ (d/db (:datomic/connection @user/sysref))
+        pxx #{}
+        q (template {:find [(pull ?e sel)]
+                     :in [$ sel]
+                     :where [[?e ${0}]]})]
+    (sequence
+     (comp (map first)
+           (map (partial st.domain/hydrate pxx)))
+     (d/qseq {:query q
+              :args [$ (st.domain/pull-expression pxx)]})))
+
 snippet dpull "suntribe datomic pull"
-	(d/pull (d/db (:datomic/connection @user/sysref)) '[*] ${0})
+	(d/pull (d/db (:datomic/connection @user/sysref)) ['*] ${0})
+
+snippet phy "suntribe datomic pull-hydrate"
+	(st.domain/ph (d/db (:datomic/connection @user/sysref)) #{'*} ${0})
+
+
+snippet sys "suntribe sysref"
+  @user/sysref${0}
+
+snippet pex "suntribe pxx expression"
+  (st.domain/pull-expression ${0})
+
+snippet shyd "suntribe sequence hydrate"
+  (sequence (comp (map first)
+                  (map (partial st.domain/hydrate ${0}))))
 
 snippet ddb "suntribe db"
 	(d/db (:datomic/connection @user/sysref))
@@ -35,3 +64,26 @@ snippet ddb "suntribe db"
 snippet gos "suntribe start development stage w/ local server"
 	${0}(user/go! :development :server)
 
+snippet got "suntribe start testing stage (which has a local server)"
+	${0}(user/go-test)
+
+snippet malli "suntribe decode malli"
+  (require '[st.api.json-api.shared-specs :as sspecs]
+           '[st.controllers.admin.interceptors :as intc])
+  (require '[malli.core :as m]
+           '[malli.transform :as mt]
+           '[malli.registry :as mr]
+           '[malli.experimental.time :as met]
+           '[malli.experimental.time.transform :as mett])
+  ${0}(malli.core/decode Schema
+                     value
+                     {:registry (mr/composite-registry
+                                 m/default-registry
+                                 (met/schemas))}
+                     (mt/transformer
+                      mt/string-transformer
+                      (mett/time-transformer)
+                      {:name :st.domain}))
+
+snippet gopc "suntribe start a system with production copy (latest)"
+	${0}(user/go! :development :aws-development-profile :server {:datomic/connections {:physical-db-mapping {"stt" "stt-prod-2025-11-6"}}})

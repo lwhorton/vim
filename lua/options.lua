@@ -30,7 +30,17 @@ vim.cmd('set noswapfile')
 
 -- no wrapping/auto-inserting of \n
 vim.cmd('set nowrap')
-vim.opt.textwidth = 80 
+
+-- dont auto-wrap exceeding textwidth
+-- c auto-wrap comments using textwidth, 
+-- r auto-insert comment leader on <return> (in insert mode)
+-- o auto-insert comment leader on o, O (in normal mode)
+-- q allow gq to manually re-flow comments
+-- l dont break long lines already containing line breaks (respect existing structure)
+vim.opt.textwidth = 0
+vim.opt.formatoptions:remove("t")
+vim.opt.formatoptions:append("croql")
+
 
 -- allow deleting text inserted before current insert mode started
 vim.opt.backspace = 'indent,eol,start'
@@ -49,7 +59,7 @@ vim.opt.smartcase = true
 
 -- highlight /search
 vim.opt.hlsearch = true
-vim.opt.incsearch = true
+vim.opt.incsearch = false
 
 -- persist undo to file
 vim.opt.undofile = true

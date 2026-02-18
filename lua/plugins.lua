@@ -2,22 +2,72 @@
 
 return {
   -- color schemes
-  --{
+  --{ 'rktjmp/lush.nvim' },
+
+    --{
     --"Tsuzat/NeoSolarized.nvim",
     --lazy = false, -- make sure we load this during startup (it is the main colorscheme)
     --priority = 1000, -- make sure to load this before all the other start plugins
   --},
+  --
+  --
+  --{'morhetz/gruvbox', 
+  --lazy = false,
+  --priority = 1000,
+  --config = function() 
+    --vim.cmd.colorscheme('gruvbox') 
+    --vim.cmd('set background=dark') 
+    ---- https://github.com/morhetz/gruvbox/wiki/Configuration#ggruvbox_contrast_dark
+    ---- soft/medium(default)/hard
+    --vim.g.gruvbox_contrast_dark = 'medium'
+  --end 
+  --},
 
-  {'morhetz/gruvbox', 
-  lazy = false,
-  priority = 1000,
-  config = function() 
-    vim.cmd.colorscheme('gruvbox') 
-    vim.cmd('set background=dark') 
-    -- https://github.com/morhetz/gruvbox/wiki/Configuration#ggruvbox_contrast_dark
-    -- soft/medium(default)/hard
-    vim.g.gruvbox_contrast_dark = 'medium'
-  end 
+  --{'p00f/alabaster.nvim', -- this port relies on treesitter instead of lsp :(
+  --lazy = false,
+  --priority = 1000,
+  --config = function() 
+    --vim.opt.termguicolors = true
+    --vim.cmd.colorscheme('alabaster') 
+    --vim.cmd('set background=dark') 
+    ---- https://github.com/p00f/alabaster.nvim
+  --end 
+  --},
+  --{
+    --dir = '/Users/luke/.config/nvim/nvim_colors', 
+    --lazy = false,
+    --priority = 1000,
+    --config = function() 
+      --vim.cmd.colorscheme("alabaster_dark")
+    --end 
+  --},
+  {'rebelot/kanagawa.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      --vim.cmd.colorscheme('kanagawa')
+    end
+  },
+  {'zenbones-theme/zenbones.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.g.zenbones_compat = 1
+    end
+  },
+  {'ishan9299/nvim-solarized-lua',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      --vim.cmd.colorscheme('solarized')
+    end
+  },
+  {'rmehri01/onenord.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme('onenord')
+    end
   },
 
   -- https://github.com/knubie/vim-kitty-navigator
@@ -120,16 +170,17 @@ return {
     'vim', 
     'yaml', 
   },
-  auto_install = true,
-  config = function()
-    vim.cmd [[ TSUpdate ]]
-  end},
+    lazy = false,
+    build = ':TSUpdate',
+    auto_install = true,
+    -- also configured further in plugin-configs
+  },
 
   -- status bar on the bottom
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
-    options = { theme = 'gruvbox' },
+    options = { theme = 'auto' },
     sections = {
       lualine_a = { 'mode' },
       lualine_b = {},
@@ -152,7 +203,6 @@ return {
   -- better mapping for slurp/barf/slice/split s-expression structural editing 
   {  'guns/vim-sexp' },
   {  'tpope/vim-sexp-mappings-for-regular-people' },
-
 
   -- so plugins can tap into "." repeat functionality
   { 'tpope/vim-repeat' },
@@ -237,7 +287,7 @@ return {
             "vimopts", "syntax", "filetype"
           },
           -- Files larger than `filesize` are considered big files. Value is in MB.
-          filesize = 2,
+          filesize = 1,
           -- Autocmd pattern that controls on which files behaviour will be applied.
           -- `*` means any file.
           pattern = "*",

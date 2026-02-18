@@ -191,7 +191,8 @@ alias sbpx="ssh -i ~/.ssh/luke-horton-simberobotics-1 \
   "
 
 ## suntribe
-alias recbus="cd ~/dev/work/recbus"
+alias rb="cd ~/dev/work/recbus"
+alias rb2="cd ~/dev/work/recbus_two"
 
 # summarize parent directories if necessary
 abbreviate_path() {
