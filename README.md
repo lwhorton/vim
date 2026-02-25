@@ -11,6 +11,7 @@ asdf, etc.). You might have to deal with errors while installing all these deps.
     mkdir -p ~/.config/nvim 
     mkdir -p ~/.config/kitty
     mkdir -p ~/.config/nvim/undo
+    mkdir -p ~/.config/nvim/after
     ```
 - install the profile for kitty via its conf: `ln -s {path_to/vim/}kitty.conf ~/.config/kitty/`
 - restart kitty
@@ -23,6 +24,7 @@ asdf, etc.). You might have to deal with errors while installing all these deps.
 ```
 ln -s {path_to/vim/}init.lua ~/.config/nvim/init.lua
 ln -s {path_to/vim/}lua ~/.config/nvim/lua
+ln -s {path_to/vim/}after ~/.config/nvim/after
 ln -s {path_to/vim/}colors ~/.config/nvim/colors
 ```
 
