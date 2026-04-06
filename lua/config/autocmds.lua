@@ -26,6 +26,14 @@ autocmd("FileType", {
   end,
 })
 
+-- disable filetype: lisp 
+autocmd("FileType", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.lisp = false
+  end
+})
+
 -- allow saving files via sudo
 vim.api.nvim_create_user_command("W", "write !sudo tee % >/dev/null", { nargs = 0 })
 

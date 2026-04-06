@@ -78,7 +78,7 @@ local servers = {
     filetypes = { "clojure", "edn" },
     root_dir = vim.fn.getcwd(),
     settings = {
-      trace_level = "verbose"
+      trace_level = "messages"
     }
   },
   { name = "jsonls"},

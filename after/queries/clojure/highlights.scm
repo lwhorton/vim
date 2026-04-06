@@ -8,4 +8,13 @@
 
 ;; --- Reader specials -----------------------------------------
 ;; Quote, syntax‑quote, unquote, unquote‑splicing, deref, var, etc.
-["'" "`" "~" "@" "^"] @punctuation.reader_special
+;["'" "`" "~" "@" "^"] @punctuation.reader_special
+[
+  (derefing_lit) ; captures @
+  (var_quoting_lit) ; captures #'
+  (quoting_lit) ; captures '
+  (syn_quoting_lit) ; captures `
+  (unquoting_lit) ; captures ~
+  (unquote_splicing_lit) ; captures ~@
+  (meta_lit) ; captures ^
+] @punctuation.reader_special

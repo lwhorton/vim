@@ -1,6 +1,7 @@
 require("nvim-treesitter.configs").setup({
-  ensure_installed = { "clojure", "comment", "lua", "vimdoc", 
-     --"javascript", 
+  ensure_installed = { "clojure", "comment", "lua",
+    --"vimdoc", 
+    --"javascript", 
     --"typescript" 
   },
   auto_install = false,

@@ -1,21 +1,4 @@
 return {
-  --{ 
-    --"catppuccin/nvim",
-    --name = "catppuccin",
-    --priority = 1000,
-    --config = function()
-      ----vim.cmd.colorscheme("catppuccin")
-    --end,
-  --},
-  --{
-    --"folke/tokyonight.nvim",
-    --lazy = false,
-    --priority = 1000,
-    --opts = {},
-    --config = function()
-      --vim.cmd.colorscheme("tokyonight")
-    --end,
-  --},
   {
     "rebelot/kanagawa.nvim",
     lazy = false,
@@ -24,33 +7,23 @@ return {
     config = function()
       vim.cmd.colorscheme("kanagawa")
     end,
+    overrides = function(colors) -- add/modify highlights
+      return {
+        ["@punctuation.reader_special"] = { fg = colors.palette.samuraiRed },
+      }
+    end,
   },
   --{
-    --"rmehri01/onenord.nvim",
+    --"uhs-robert/oasis.nvim",
     --lazy = false,
     --priority = 1000,
     --config = function()
-      --vim.cmd.colorscheme("onenord")
-      ---- onenord only defines treesitter groups but not LSP semantic token groups:
-      --local links = {
-        --['@lsp.type.variable'] = '@variable',
-        --['@lsp.type.parameter'] = '@variable.parameter',
-        --['@lsp.type.function'] = '@function',
-        --['@lsp.type.method'] = '@function.method',
-        --['@lsp.type.property'] = '@variable.member',
-        --['@lsp.type.keyword'] = '@keyword',
-        --['@lsp.type.type'] = '@type',
-        --['@lsp.type.class'] = '@type',
-        --['@lsp.type.namespace'] = '@module',
-        --['@lsp.type.comment'] = '@comment',
-      --}
-  
-      --for lsp_group, ts_group in pairs(links) do
-        --vim.api.nvim_set_hl(0, lsp_group, { link = ts_group })
-      --end
-    --end,
+      ---- https://github.com/uhs-robert/oasis.nvim
+      --require("oasis").setup()  
+      --vim.opt.termguicolors = true
+      --vim.cmd.colorscheme("oasis-night") -- after setup
+    --end
   --},
-
   { "guns/vim-clojure-static", ft = "clojure" },
 
   -- terminal integration
@@ -125,7 +98,6 @@ return {
     lazy = true,
     build = ":TSUpdate",
   },
-
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -165,8 +137,16 @@ return {
   -- s-expression editing
   { 
     "guns/vim-sexp",
-    init = function()
+    ft = { 'clojure' },
+    config = function()
       vim.g.sexp_enable_insert_mode_mappings = 0
+      -- disable this new "feature" smart paste 
+      vim.g.sexp_mappings = {
+        sexp_put_before = '',
+        sexp_put_after = '',
+        sexp_replace = '',
+        sexp_replace_P = '',
+      }
     end
   },
   { "tpope/vim-sexp-mappings-for-regular-people" },
@@ -193,7 +173,6 @@ return {
       vim.g.mkdp_filetypes = { "markdown" }
     end,
   },
-
   -- performance optimization
   {
     "pteroctopus/faster.nvim",

@@ -47,9 +47,16 @@ snippet dpull "suntribe datomic pull"
 snippet phy "suntribe datomic pull-hydrate"
 	(st.domain/ph (d/db (:datomic/connection @user/sysref)) #{'*} ${0})
 
-
 snippet sys "suntribe sysref"
   @user/sysref${0}
+
+snippet dsys "suntribe deref sysref"
+  {conn :datomic/connection :as sys} @user/sysref${0}
+
+snippet lsys "suntribe let deref sysref"
+  (let [{conn :datomic/connection :as sys} @user/sysref
+        $ (d/db conn)]
+    ${0})
 
 snippet pex "suntribe pxx expression"
   (st.domain/pull-expression ${0})

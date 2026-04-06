@@ -4,6 +4,7 @@ vim.g["conjure#log#hud#width"] = 1.0
 vim.g["conjure#log#hud#height"] = 0.2
 vim.g["conjure#log#trim#at"] = 3000
 vim.g["conjure#log#wrap"] = false
+vim.g["conjure#preview#sample_limit"] = 1.0
 vim.g["conjure#extract#tree_sitter#enabled"] = false
 vim.g["conjure#extract#context_header_lines"] = 100
 vim.g["conjure#client#clojure#nrepl#eval#raw_out"] = true

@@ -38,7 +38,10 @@ vim.opt.number = true
 vim.opt.textwidth = 0
 vim.opt.formatoptions:remove("t")
 vim.opt.formatoptions:remove("o")
-vim.opt.formatoptions:append("crql")
+vim.opt.formatoptions:append("c")
+vim.opt.formatoptions:append("r")
+vim.opt.formatoptions:append("q")
+vim.opt.formatoptions:append("l")
 vim.opt.backspace = "indent,eol,start"
 
 -- # Search
