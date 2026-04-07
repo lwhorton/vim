@@ -15,6 +15,9 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = ","
 vim.g.maplocalleader = ","
 
+vim.o.verbose = 9
+vim.o.verbosefile = '/tmp/nvim_session_' .. os.date('%Y%m%d_%H%M%S') .. '.log'
+
 -- load core configs
 require("config.options")
 require("config.keymaps")

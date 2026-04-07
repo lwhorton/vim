@@ -69,4 +69,3 @@ end, { desc = "Search for partial word under cursor, without moving." })
 
 -- after searching, hit return again (command mode) to clear highlights
 keymap("n", "<CR>", ":noh<CR><CR>", opts)
-
